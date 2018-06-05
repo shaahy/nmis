@@ -65,7 +65,7 @@ export default {
   methods: {
     postData(){
       //利用axios来实现
-      this.$axios.post("http://localhost:3000/blogs",this.blog)
+      this.$axios.post("/blogs",this.blog)
           .then( res => {
             console.log(res);
             this.submited = true;

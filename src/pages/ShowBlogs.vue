@@ -28,7 +28,7 @@ export default {
   },
   created(){
     //获取数据 
-    this.$axios.get("http://localhost:3000/blogs")
+    this.$axios.get("/blogs")
         .then( res => {
           //console.log(res)
           this.blogs = res.data;
