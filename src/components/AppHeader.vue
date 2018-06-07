@@ -4,6 +4,7 @@
       <li><router-link to="/" exact>首页</router-link></li>
       <li><router-link to="/add-blog" exact>子页面一</router-link></li>
       <li><router-link to="/show-blog" exact>子页面二</router-link></li>
+      <li><router-link to="/test" exact>测试页面</router-link></li>
     </ul>
   </nav>
 </template>

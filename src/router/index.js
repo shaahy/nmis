@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import AddBlog from '@/pages/AddBlog'  //示例
 import ShowBlogs from '@/pages/ShowBlogs' //示例
 import Home from '@/pages/Home' //示例
+import Test from '@/pages/Test' //示例
 
 Vue.use(VueRouter)
 
@@ -20,6 +21,10 @@ export const router =  new VueRouter({
     {
       path:"/add-blog",
       component: AddBlog
+    },
+    {
+      path:"/test",
+      component: Test
     }
   ],
   mode: "history"
