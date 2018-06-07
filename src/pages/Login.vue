@@ -25,15 +25,17 @@ export default {
     return {
       userName:"",
       passWord:"",
-
     }
   },
   methods: {
     onSubmit(){
-      //改变状态属性
-      //this.$store.commit("setUserName","zhang yi")
-      //获取状态属性
-      //this.userName = this.$store.getters.getUserName;
+      // //直接调用属性状态
+      // console.log(this.$store.state.user.userName)
+      // console.log(this.$store.state.flow.userName)
+      // //mutation改变状态属性
+      // this.$store.commit('user/setUserName','zhang yi')
+      // //getters方式获取状态属性
+      // this.userName = this.$store.getters['user/getUserName'];        
     }
   },
   created(){
