@@ -1,1 +1,21 @@
-$tmpColor:rgb(223, 58, 223);
+// 全局变量区
+$main-color:#4cbdb4;
+$bg-color:#f6f8f9;
+$font-color-cz1:#000;
+$font-color-cz2:#333;
+$font-color-cz3:#666;
+$font-color-cz4:#999;
+
+
+/* 全局样式 */
+* { margin:0;outline:none; word-wrap: break-word; box-sizing: border-box;}
+body { font-size:14px; font-family:Arial,'Microsoft YaHei',"微软雅黑";  margin: 0 auto; color: #777; overflow-x: hidden;background-color:#FFFFFF }
+ol, ul { list-style: none; }
+img { border:none;}
+a { text-decoration: none; cursor: pointer; }
+a:link, a:visited { text-decoration: none; -webkit-transition: all 480ms; -ms-transition: all 480ms; -moz-transition: all 480ms; transition: all 480ms; }
+a:active, a:hover { text-decoration: none; -webkit-transition: all 480ms; -ms-transition: all 480ms; -moz-transition: all 480ms; transition: all 480ms; }
+.clearfix:before, .clearfix:after { display: table; content: ""; line-height: 0px; }
+.clearfix:after { clear: both; }
+.clearfix { *zoom: 1; }
+/* 全局样式结束 */
