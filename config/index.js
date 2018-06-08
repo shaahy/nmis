@@ -6,12 +6,18 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
-
+    proxyTable: {  
+      '/nmis': {  
+          target: 'http://192.168.1.156/api', //接口域名
+          changeOrigin: true,  //是否跨域
+          pathRewrite: {       //地址重写：'/nmis' 替换 target(即) http://192.168.1.156/api
+              '^/nmis': '/'  
+          }  
+      }  
+     } ,
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
@@ -19,7 +25,6 @@ module.exports = {
     errorOverlay: true,
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
-
     
     /**
      * Source Maps

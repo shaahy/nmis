@@ -13,8 +13,10 @@
       </el-input>
       <el-button type="primary" @click="onSubmit" class="btn-login">登&nbsp;&nbsp;&nbsp;&nbsp;陆</el-button>
       <el-row><a href="#" class="btn-forget">忘记密码？</a></el-row>
-      {{ userName }}
     </form>
+
+    <!-- <el-button @click="test">读取Vuex与localStorage数据</el-button>
+    <el-button @click="test2">删除localStorage中的数据</el-button> -->
   </div>
 </template>
 
@@ -29,14 +31,36 @@ export default {
   },
   methods: {
     onSubmit(){
-      // //直接调用属性状态
-      // console.log(this.$store.state.user.userName)
-      // console.log(this.$store.state.flow.userName)
-      // //mutation改变状态属性
-      // this.$store.commit('user/setUserName','zhang yi')
-      // //getters方式获取状态属性
-      // this.userName = this.$store.getters['user/getUserName'];        
-    }
+      
+      //登陆请求
+      this.$axios.post("/nmis/v1/users/login",{
+        authkey:"username",
+        username:this.userName,
+        password:this.passWord
+      })
+          .then(res=>{
+            //添加登陆用户
+            //console.log(res);
+            this.$store.commit('user/addLoginUser', res.data);
+            this.$router.push('/home')           
+          })
+          .catch(err=>{
+            console.log(err);
+          })
+    },
+/*     test(){
+      console.log('保存在Vuex中的数据')
+      console.log(this.$store.state.user.user)
+      console.log(this.$store.state.user.staff)
+      console.log('保存在localStore中的数据')
+      console.log(JSON.parse(localStorage.getItem('user')))
+      console.log(JSON.parse(localStorage.getItem('staff')))
+
+    },
+    test2(){
+       localStorage.removeItem('user');
+       localStorage.removeItem('staff');
+    } */
   },
   created(){
 
@@ -46,7 +70,7 @@ export default {
 
 <style lang="scss" scoped>
 header{
-  background-color: $main-color;
+  background-color: $main-color; 
   height: 150px;
   div{
     width:414px;    

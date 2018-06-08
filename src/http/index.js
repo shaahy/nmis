@@ -1,8 +1,10 @@
+
 import axios from 'axios';
 
 //配置一
+axios.defaults.withCredentials=true; //让ajax携带cookie
+
 const instance = axios.create({
-  baseURL: "http://localhost:3000"
 })
 //配置二
 const instance2 = axios.create({
