@@ -4,13 +4,20 @@
       <div class="clearfix"><img src="../assets/img/logo.png" alt=""><h1>医疗设备管理系统</h1></div>
     </header>
     <form class="login-box">
-      <h2>登陆</h2>
+      <h2>登陆</h2> 
+      <el-alert
+          :title="errMessage"
+          type="error"
+          show-icon
+          :closable="false"
+          v-if="isError">
+      </el-alert>        
       <el-input v-model="userName" placeholder="请输入用户名/手机/邮箱/email">
         <template slot="prepend"><img src="../assets/img/input_user_icon.png" alt=""></template>
       </el-input>        
       <el-input v-model="passWord" placeholder="请输入密码" type="password">
         <template slot="prepend"><img src="../assets/img/input_pwd_icon.png" alt=""></template>
-      </el-input>
+      </el-input>         
       <el-button type="primary" @click="onSubmit" class="btn-login">登&nbsp;&nbsp;&nbsp;&nbsp;陆</el-button>
       <el-row><a href="#" class="btn-forget">忘记密码？</a></el-row>
     </form>
@@ -27,6 +34,8 @@ export default {
     return {
       userName:"",
       passWord:"",
+      isError:false,
+      errMessage:""
     }
   },
   methods: {
@@ -39,28 +48,28 @@ export default {
         password:this.passWord
       })
           .then(res=>{
-            //添加登陆用户
-            //console.log(res);
-            this.$store.commit('user/addLoginUser', res.data);
-            this.$router.push('/home')           
+            //判断登陆是否成功
+            if(res.data.code === 11009){
+              //登陆错误
+              this.isError = true;
+              this.errMessage = "";
+              for (const key in res.data.errors) {
+                this.errMessage += res.data.errors[key]
+              }
+            }else{
+              //登陆成功
+              this.isError = false;
+              this.errMessage = "";
+              this.$router.push('/home') 
+            }            
+            // console.log(res);
+            this.$store.commit('user/addLoginUser', res.data);        
           })
           .catch(err=>{
             console.log(err);
           })
-    },
-/*     test(){
-      console.log('保存在Vuex中的数据')
-      console.log(this.$store.state.user.user)
-      console.log(this.$store.state.user.staff)
-      console.log('保存在localStore中的数据')
-      console.log(JSON.parse(localStorage.getItem('user')))
-      console.log(JSON.parse(localStorage.getItem('staff')))
+    }
 
-    },
-    test2(){
-       localStorage.removeItem('user');
-       localStorage.removeItem('staff');
-    } */
   },
   created(){
 
@@ -94,7 +103,7 @@ header{
 .login-box{
   position: relative;
   width:400px;
-  height: 310px;
+  height: auto;
   padding:33px;
   background-color:$bg-color;
   margin: 0 auto;
@@ -103,7 +112,7 @@ header{
     color:$font-color-cz2;
     letter-spacing: 5px;
     font-size: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
   .el-input{
     margin-top: 15px;
@@ -112,7 +121,7 @@ header{
     }
   }
   .btn-login{
-    margin-top: 20px;
+    margin-top: 30px;
     width:100%;
     font-size: 16px;
   }

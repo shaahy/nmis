@@ -1,6 +1,5 @@
-import cookies from 'vue-cookies'       //引入cookie模块
+import cookies from 'vue-cookies'      						 //引入cookie模块
 const state = {
-	isLogin: false,
 	//员工属性
 	staff:{
 		id: '',							//staff_id
@@ -30,21 +29,12 @@ const state = {
 }
 
 const getters= {
-	//暂时没有用到（在action里用）
-	isLogin:state =>{
-		if(cookies.get('isLogin') == 'true') 
-			return true;
-		else
-			location.href="http://localhost:8080"
-	},
-	// 获取属性的状态 (注意！！！！这里需要重写，再抽一个函数 isLogin, 再在actions中写方法（先判断登陆状态，再取数据）)
+	/*
+		获取员工信息
+	*/
 	getStaff: state => {
-		if(cookies.get('isLogin') == 'true'){
 			state.staff = JSON.parse(localStorage.getItem('staff'));
 			return state.staff;
-		}else{
-			location.href = "http://localhost:8080"
-		}
 	}
 }
 const mutations= {
@@ -52,7 +42,6 @@ const mutations= {
 		用户登入：
 		1、保存用户相关数据至state与LocalStorage
 		2、保存用户token至cookie
-		3、设置登陆状态为true	
 	*/
 	addLoginUser(state, data){
 		localStorage.setItem('staff',JSON.stringify(data.staff))
@@ -61,9 +50,6 @@ const mutations= {
 		state.user = data.user;
 		//保存token
 		cookies.set("Authentication","Token "+ data.authtoken)
-		//设置登陆状态
-		cookies.set('isLogin', true)
-		state.isLogin = true;
 	}
 
 }

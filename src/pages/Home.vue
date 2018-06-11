@@ -18,7 +18,6 @@ export default {
   created(){
     //获取用户信息
     this.staff = this.$store.getters['user/getStaff']
-
   }
 }
 </script>
