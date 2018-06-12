@@ -60,7 +60,7 @@ export default {
               //登陆成功
               this.isError = false;
               this.errMessage = "";
-              this.$router.push('/home') 
+              this.$router.push({name:'projectIndexLink'}) 
             }            
             // console.log(res);
             this.$store.commit('user/addLoginUser', res.data);        
