@@ -51,7 +51,9 @@ export default {
 
 <style lang="scss" scoped>
 header{
-  position: relative;
+  position: absolute;
+  top:0;
+  left:0;
   height: $header-height;
   width: 100%;
   background-color:$second-color;

@@ -1,13 +1,9 @@
 <template>
   <el-row>
     <app-header></app-header>
-    <div class="clearfix">
-      <div class="left">
-        <app-sidebar></app-sidebar>
-      </div>
-      <div class="right">
-        <router-view></router-view>
-      </div>
+    <app-sidebar></app-sidebar>
+    <div class="main-container" :style="{width:innerWidth}">
+      <router-view></router-view>
     </div>
   </el-row>
 </template>
@@ -19,7 +15,7 @@ export default {
   name: 'my-project',
   data () {
     return {
-     
+     innerWidth: (window.innerWidth-185)+'px'
     }
   },
   components:{
@@ -28,17 +24,16 @@ export default {
   },
   created(){
     this.$store.commit('nav/setManageActive');
-  }
+  },
+  mounted(){
+    window.onresize = res =>{
+      this.innerWidth = (window.innerWidth-185)+'px';
+      console.log(window.innerWidth)
+    }
+  }  
 }
 </script>
 
 <style lang="scss" scoped>
-.left{
-  float: left;
-  width:$sidebar-width;
-}
-.right{
-  float:left;
-  padding: 30px;
-}
+
 </style>

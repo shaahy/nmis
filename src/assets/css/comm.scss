@@ -21,4 +21,39 @@ $sidebar-width:168px;
  .clearfix:before, .clearfix:after { display: table; content: ""; line-height: 0px; }
  .clearfix:after { clear: both; }
  .clearfix { *zoom: 1; }
+
+//侧边栏目样式
+.sidebar{
+  position: absolute;
+  top:58px;
+  left:0;
+  width: $sidebar-width;
+  padding-top:30px;
+  background-color: #fff;
+  a{
+    display: block;
+    padding: 15px 0;
+    text-align: center;
+    color:#333;
+    margin:15px 0;
+    &:hover{
+      background-color: $main-color;
+      color:#fff;
+    }
+    transition: 0.3s;
+    &.router-link-active{
+      background-color: $main-color;
+      color:#fff;
+    }
+  }
+}
+
+//框架main-container中间部分样式
+.main-container{
+  box-sizing: border-box;
+  padding: 40px 40px 40px 60px;
+  margin-top:$header-height;
+  margin-left:$sidebar-width;
+}
+
 /* 全局样式结束 */
