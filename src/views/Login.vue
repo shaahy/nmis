@@ -60,10 +60,17 @@ export default {
               //登陆成功
               this.isError = false;
               this.errMessage = "";
-              this.$router.push({name:'projectIndexLink'}) 
+              this.$store.commit('user/addLoginUser', res.data); 
+              /*
+               强制刷新一次页面，原因如下：
+               axios的请求头配置Token在登陆之前就配置了，那时cookies中还没有Token
+               这里强制刷新一次，vue组件会重载一次，http/index.js会再执行一次
+               此时，axios的请求头就可以正常读到cookies中Token，并设置完成
+               PS:这里是不得已如此，目前没有找到更好的办法，暂时先这样，后续再思考更好的方式
+              */
+              window.location.replace("http://localhost:8080/project/my-project")
             }            
-            // console.log(res);
-            this.$store.commit('user/addLoginUser', res.data);        
+           
           })
           .catch(err=>{
             console.log(err);
@@ -72,7 +79,6 @@ export default {
 
   },
   created(){
-
   }
 };
 </script>

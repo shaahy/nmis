@@ -49,7 +49,7 @@ const mutations= {
 		state.staff = data.staff;
 		state.user = data.user;
 		//保存token
-		cookies.set("Authentication","Token "+ data.authtoken)
+		cookies.set("Authorization","Token "+ data.authtoken)
 	}
 
 }

@@ -14,7 +14,7 @@
       <span>至</span>
       <el-date-picker type="date" placeholder="选择日期" v-model="form.date2" style="width: 214px"></el-date-picker>
       <div class="search">
-        <el-input placeholder="请输入内容" v-model="keyWord">
+        <el-input placeholder="请输入内容" v-model="form.keyWord">
           <el-button slot="append" icon="el-icon-search"></el-button>        
         </el-input> 
       </div>
@@ -30,7 +30,7 @@
       <el-button type="primary">新建项目</el-button>
     </el-row>
     <el-row class="row3">
-      <div class="item">
+      <div class="item clearfix">
         <div class="left">
           <img src="../../assets/img/portrait.jpg" alt="" class="portrait">
           <p class="applicant">申请人：<strong>张三</strong></p>
@@ -64,10 +64,80 @@
                   <span class="date">2018.10.05</span>
                 </div>
               </li>                                                                   
+              <li>
+                <div class="node">
+                  <span class="title">合同会签</span>
+                  <span class="cicle"><i></i></span>
+                  <span class="file">文档（2）</span>
+                  <span class="date">2018.10.05</span>
+                </div>
+              </li>                                                                   
+              <li>
+                <div class="node">
+                  <span class="title">已完成</span>
+                  <span class="cicle"><i></i></span>
+                  <span class="file">文档（2）</span>
+                  <span class="date">2018.10.05</span>
+                </div>
+              </li>                                                                   
             </ul>
           </div>
         </div>
       </div>
+      <div class="item clearfix">
+        <div class="left">
+          <img src="../../assets/img/portrait.jpg" alt="" class="portrait">
+          <p class="applicant">申请人：<strong>张三</strong></p>
+          <h2 class="project-name">信息管理服务系统</h2>
+          <p class="date">2018年06月01日—2028年06月01日</p>
+        </div>
+        <div class="right">
+          <div class="flow">
+            <ul>
+              <li class="done">
+                <div class="node">
+                  <span class="title">待启动</span>
+                  <span class="cicle"><i></i></span>
+                  <span class="file">文档（2）</span>
+                  <span class="date">2018.10.05</span>
+                </div>
+              </li>
+              <li class="doing">
+                <div class="node">
+                  <span class="title">项目前期准备</span>
+                  <span class="cicle"><i></i></span>
+                  <span class="file">文档（2）</span>
+                  <span class="date">2018.10.05</span>
+                </div>
+              </li>  
+              <li>
+                <div class="node">
+                  <span class="title">标书会签</span>
+                  <span class="cicle"><i></i></span>
+                  <span class="file">文档（2）</span>
+                  <span class="date">2018.10.05</span>
+                </div>
+              </li>                                                                   
+              <li>
+                <div class="node">
+                  <span class="title">合同会签</span>
+                  <span class="cicle"><i></i></span>
+                  <span class="file">文档（2）</span>
+                  <span class="date">2018.10.05</span>
+                </div>
+              </li>                                                                   
+              <li>
+                <div class="node">
+                  <span class="title">已完成</span>
+                  <span class="cicle"><i></i></span>
+                  <span class="file">文档（2）</span>
+                  <span class="date">2018.10.05</span>
+                </div>
+              </li>                                                                   
+            </ul>
+          </div>
+        </div>
+      </div>      
     </el-row>
   </div>
 </template>
@@ -128,10 +198,10 @@ export default {
   }
 }
 .row3{
-  margin-top:16px;
   background: none;
   padding-left:0;
   padding-right:0;
+  .item{ margin-top:16px; }
   .left{
     height:250px;
     width:250px;
@@ -167,6 +237,8 @@ export default {
     height:250px;
     padding:20px 0 20px 50px;
     width:calc(100% - 260px);
+    min-width: 980px;
+    overflow: hidden;
     background-color: #fff;
     float:right;
     .flow{
@@ -227,17 +299,20 @@ export default {
 
           // 已完成状态
           &.done{
-            border-left: 1px solid $main-color;
-            .title{
-              background-color: $main-color;
-              color:#fff;
-            }
-            .cicle{
-              background-color: $main-color;
+            .node{
+              border-left: 1px solid $main-color;
+              .title{
+                background-color: $main-color;
+                color:#fff;
+              }
+              .cicle{
+                background-color: $main-color;
+              }
             }
           }
 
           &.doing{
+            .node{
             border-left: 1px solid #f47475;
             .title{
               background-color: #f47475;
@@ -246,6 +321,7 @@ export default {
             .cicle{
               background-color: #f47475;
             }            
+            }
           }
         }
       }

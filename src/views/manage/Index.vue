@@ -28,7 +28,6 @@ export default {
   mounted(){
     window.onresize = res =>{
       this.innerWidth = (window.innerWidth-185)+'px';
-      console.log(window.innerWidth)
     }
   }  
 }

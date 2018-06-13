@@ -5,14 +5,15 @@ import './assets/css/element-variables.scss'
 import App from './App'
 import {router} from './router'            //引入路由模块
 import store from './store'
-import axios from './http';                //引入http模块
+import {instance, checkResData} from './http';                //引入http模块
 
 
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 Vue.use(VueCookies);
-Vue.prototype.$axios = axios;
+Vue.prototype.$axios = instance;
+Vue.prototype.$checkResData = checkResData;
 
 
 

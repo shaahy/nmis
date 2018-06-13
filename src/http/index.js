@@ -1,18 +1,26 @@
 
 import axios from 'axios';
+import cookies from 'vue-cookies' 
 
 //配置一
-axios.defaults.withCredentials=true; //让ajax携带cookie
+//axios.defaults.withCredentials=true; //让ajax携带cookie
 
-const instance = axios.create({
+export const instance = axios.create({
+  headers:{
+    Authorization: cookies.get('Authorization')
+  }
 })
-//配置二
-const instance2 = axios.create({
-  baseURL: "http://localhost:4000"
-})
-export default instance
-export {instance2}
 
+//验证http返回数据
+export const checkResData = function(res){
+  if(res.data.code !== 10000){
+    let errMessage = "";
+    for (const key in res.data.errors) {
+      errMessage += res.data.errors[key]
+    }
+    throw errMessage
+  }
+}
 
 //在需要使用的时导入不同的axios实例
 //import { instance, instance2} from './*/http'

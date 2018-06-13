@@ -12,8 +12,9 @@ $sidebar-width:168px;
 
 
 /* 全局样式 */
-* { margin:0;outline:none; word-wrap: break-word; box-sizing: border-box;}
- ol, ul { list-style-type: none; padding:0;}
+* {box-sizing: border-box;}
+body { font-family:'Microsoft YaHei',"微软雅黑"; overflow-x: hidden;}
+ ol, ul { list-style-type: none; padding:0;margin:0;}
  img { border:none;}
  a { text-decoration: none; cursor: pointer; }
 // a:link, a:visited { text-decoration: none; -webkit-transition: all 480ms; -ms-transition: all 480ms; -moz-transition: all 480ms; transition: all 480ms; }
@@ -22,11 +23,12 @@ $sidebar-width:168px;
  .clearfix:after { clear: both; }
  .clearfix { *zoom: 1; }
 
-//侧边栏目样式
+//侧边栏sidebar目样式
 .sidebar{
-  position: absolute;
+  position: fixed;
   top:58px;
   left:0;
+  z-index: 777;
   width: $sidebar-width;
   padding-top:30px;
   background-color: #fff;
