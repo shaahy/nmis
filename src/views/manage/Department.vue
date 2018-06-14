@@ -18,10 +18,14 @@
             <el-button
               size="mini"
               type="primary"
+              round
+              icon="el-icon-edit"
               @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
             <el-button
               size="mini"
               type="danger"
+              round
+              icon="el-icon-delete"
               @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
           </el-table-column>          
@@ -260,10 +264,4 @@ export default {
   }
 }
 
-.el-dialog__header {
-  background-color: $main-color;
-  .el-dialog__title{
-    color:#fff;
-  }
-}
 </style>

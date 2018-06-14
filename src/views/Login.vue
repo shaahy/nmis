@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <header>
-      <div class="clearfix"><img src="../assets/img/logo.png" alt=""><h1>医疗设备管理系统</h1></div>
+      <div class="clearfix"><img src="../assets/img/logo.png" alt=""><h1>信息服务管理系统</h1></div>
     </header>
     <form class="login-box">
       <h2>登陆</h2> 
