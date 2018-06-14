@@ -2,12 +2,16 @@
 import axios from 'axios';
 import cookies from 'vue-cookies' 
 
-//配置一
+//配置一(不携带Token,主要用于登陆)
 //axios.defaults.withCredentials=true; //让ajax携带cookie
+export const http_login = axios.create({
+})
 
-export const instance = axios.create({
+//配置二(携带Token,主要用于用于后续请求)
+//axios.defaults.withCredentials=true; //让ajax携带cookie
+export const http = axios.create({
   headers:{
-    Authorization: cookies.get('Authorization')
+     Authorization: cookies.get('Authorization')
   }
 })
 
@@ -18,6 +22,8 @@ export const checkResData = function(res){
     for (const key in res.data.errors) {
       errMessage += res.data.errors[key]
     }
+    errMessage += res.data.msg;
+    console.log(errMessage);
     throw errMessage
   }
 }

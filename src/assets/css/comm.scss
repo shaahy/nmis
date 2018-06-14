@@ -1,6 +1,7 @@
 // 全局变量区
 $main-color:#4cbdb4;
 $second-color:#109187;
+$third-color:#f47475;
 $bg-color:#f6f8f9;
 $font-color-cz1:#000;
 $font-color-cz2:#333;
@@ -12,8 +13,8 @@ $sidebar-width:168px;
 
 
 /* 全局样式 */
-* {box-sizing: border-box;}
-body { font-family:'Microsoft YaHei',"微软雅黑"; overflow-x: hidden;}
+* {box-sizing: border-box;font-family:'Microsoft YaHei',"微软雅黑";}
+body { overflow-x: hidden;}
  ol, ul { list-style-type: none; padding:0;margin:0;}
  img { border:none;}
  a { text-decoration: none; cursor: pointer; }

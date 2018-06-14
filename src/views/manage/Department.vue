@@ -32,7 +32,7 @@
     <!-- 添加部门 -->
     <el-dialog title="添加部门" :visible.sync="addVisible" width="600px">
       <el-form :model="addData" :rules="rules">
-        <el-form-item label="部门属性" prop="attri" label-width='80px' required>
+        <el-form-item label="部门属性" label-width='80px' required>
           <el-select v-model="addData.attri" placeholder="请选择部门属性">
             <el-option label="医技" value="ME"></el-option>
             <el-option label="后勤" value="SU"></el-option>
@@ -40,10 +40,10 @@
             <el-option label="其它" value="OT"></el-option>
           </el-select>
         </el-form-item>        
-        <el-form-item label="部门名称" label-width='80px' prop="deptName">
-          <el-input auto-complete="off" v-model="addData.deptName"></el-input>
+        <el-form-item label="部门名称" label-width='80px' prop="name">
+          <el-input auto-complete="off" v-model="addData.name"></el-input>
         </el-form-item>
-        <el-form-item label="职能描述" label-width='80px'>
+        <el-form-item label="职能描述" label-width='80px'> 
           <el-input auto-complete="off" v-model="addData.desc" type="textarea" rows=5></el-input>
         </el-form-item>
       </el-form>
@@ -56,17 +56,25 @@
 
     <!-- 编辑 -->
     <el-dialog title="编辑部门" :visible.sync="editVisible" width="600px">
-      <el-form>
+      <el-form :model="editData" :rules="rules">
+        <el-form-item label="部门属性" prop="attri" label-width='80px' required>
+          <el-select v-model="editData.attri" placeholder="请选择部门属性">
+            <el-option label="医技" value="ME"></el-option>
+            <el-option label="后勤" value="SU"></el-option>
+            <el-option label="行政" value="OF"></el-option>
+            <el-option label="其它" value="OT"></el-option>
+          </el-select>
+        </el-form-item>          
         <el-form-item label="部门名称" label-width='80px'>
-          <el-input auto-complete="off" v-model="editData.department"></el-input>
+          <el-input auto-complete="off" v-model="editData.name"></el-input>
         </el-form-item>
         <el-form-item label="职能描述" label-width='80px'>
-          <el-input auto-complete="off" v-model="editData.description" type="textarea" rows=5></el-input>
+          <el-input auto-complete="off" v-model="editData.desc" type="textarea" rows=5></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="editVisible = false" type="danger">取 消</el-button>
-        <el-button type="primary" @click="editVisible = false">提 交</el-button>
+        <el-button @click="cancelEdit" type="danger">取 消</el-button>
+        <el-button type="primary" @click="confirmEdit">提 交</el-button>
       </div>
     </el-dialog>    
   </div>
@@ -92,15 +100,19 @@ export default {
      */
      addVisible:false,
      editVisible:false,
-     editData:{},
+     editData:{
+       name:'',
+       desc:'',
+       attri:''
+     },
      addData:{
-       deptName:'',
+       name:'',
        desc:'',
        attri:''
      },
      //验证规则
      rules:{
-       deptName:[
+       name:[
          { required: true, message:"请输入部门/科室名称", trigger: 'blur' }
        ]
      }
@@ -115,14 +127,12 @@ export default {
       this.addVisible = true;
     },
     cancelAdd(){
-      console.log(this.addData)
-      this.addData = {}
+      this.addData = {};
       this.addVisible = false;
-      
     },
     confirmAdd(){
       this.$axios.post('/nmis/v1/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/departments/create', {
-        name:this.addData.deptName,
+        name:this.addData.name,
         desc:this.addData.desc,
         attri:this.addData.attri
       })
@@ -140,32 +150,68 @@ export default {
       this.addData = {}
     },
 
-    /** 删除部门操作 **/
+    /** 编辑部门操作 **/
     handleEdit(index, row) {
-      this.editData = row,
+      this.editData = JSON.parse(JSON.stringify(row)); //复制对象，需JSON这序列化，否则会赋值引用
       this.editVisible = true;
-      console.log(this.editData)
+    },
+    cancelEdit(){
+      this.editData = {}
+      this.editVisible = false;
+    },
+    confirmEdit(){
+      this.$axios.put('/nmis/v1/hospitals/'+this.editData.organ+'/departments/'+this.editData.id,{
+        name:this.editData.name,
+        desc:this.editData.desc,
+        attri:this.editData.attri        
+      })
+          .then(res=>{
+            this.$checkResData(res);
+            this.getDepartmentList();
+            this.$message({ type: 'success',  message: '编辑成功!'});        
+            this.editVisible = false;
+            console.log(res)
+          })
+          .catch(err=>{
+            this.$message({ type: 'error',  message: err});
+          })      
     },
 
+    /** 删除部门操作 **/
     handleDelete(index, row) {
-      this.$confirm('此操作将删除 [ '+row.department+' ] , 是否继续?', '提示', {
+      console.log(row);
+      this.$confirm('此操作将删除部门: <strong style="color:#f47475;font-size:14px;"> 《'+row.name+'》</strong> , 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
+        dangerouslyUseHTMLString: true,
         type: 'warning'
-      }).then(() => {
-        this.$message({ type: 'success',  message: '删除成功!'});
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        });          
-      });      
+      })
+        //点击确定
+        .then(() => {
+          this.$axios.delete('/nmis/v1/hospitals/'+row.organ+'/departments/'+row.id)
+              .then(res=>{
+                this.$checkResData(res);
+                this.getDepartmentList();
+                this.$message({ type: 'success',  message: '删除成功!'});
+              })
+              .catch(err=>{
+                this.$message({ type: 'error',  message: err});
+              })
+        
+        })
+        //点击取消
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          });          
+        });      
     },
     //获取部门数据 
     getDepartmentList(){
       this.$axios.get('/nmis/v1/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/departments')
           .then(res=>{
-            //console.log(res);
+            this.$checkResData(res);
             this.tableData = res.data.dept;
           })
           .catch(err=>{

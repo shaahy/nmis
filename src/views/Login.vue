@@ -42,20 +42,23 @@ export default {
     onSubmit(){
       
       //登陆请求
-      this.$axios.post("/nmis/v1/users/login",{
+      this.$axios_login.post("/nmis/v1/users/login",{
         authkey:"username",
         username:this.userName,
         password:this.passWord
       })
           .then(res=>{
+            console.log(res)
             //判断登陆是否成功
-            if(res.data.code === 11009){
+            if(res.data.code !== 10000){
               //登陆错误
               this.isError = true;
               this.errMessage = "";
               for (const key in res.data.errors) {
                 this.errMessage += res.data.errors[key]
               }
+              this.errMessage += res.data.msg;
+              throw this.errMessage;
             }else{
               //登陆成功
               this.isError = false;
@@ -68,9 +71,9 @@ export default {
                此时，axios的请求头就可以正常读到cookies中Token，并设置完成
                PS:这里是不得已如此，目前没有找到更好的办法，暂时先这样，后续再思考更好的方式
               */
-              window.location.replace("http://localhost:8080/project/my-project")
+              //this.$router.put({name: "myProjectLink"})
+              window.location.replace('/project/my-project')
             }            
-           
           })
           .catch(err=>{
             console.log(err);
