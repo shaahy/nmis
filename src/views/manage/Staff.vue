@@ -42,8 +42,8 @@
     </div>
 
     <!-- 添加员工窗体 -->
-    <el-dialog title="添加员工" :visible.sync="addVisible" width="600px">
-      <el-form :model="addData" :rules="rules" ref="ruleForm">      
+    <el-dialog title="添加员工" :visible.sync="addVisible" width="600px" @close="addClose('addForm')">
+      <el-form :model="addData" :rules="rules" ref="addForm">      
         <el-form-item label="成员账号" label-width='80px' prop='username'>
           <el-input auto-complete="off" v-model="addData.username"></el-input>
         </el-form-item>
@@ -63,15 +63,15 @@
         </el-form-item>          
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelAdd" type="danger">取 消</el-button>
-        <el-button type="primary" @click="confirmAdd('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="confirmAdd('addForm')">确 定</el-button>
+        <el-button @click="cancelAdd('addForm')" type="info">取 消</el-button>
       </div>
     </el-dialog>  
 
 
     <!-- 编辑 -->
-    <el-dialog title="修改员工信息" :visible.sync="editVisible" width="600px">
-      <el-form :model="editData" :rules="rules" ref="ruleForm">      
+    <el-dialog title="修改员工信息" :visible.sync="editVisible" width="600px"  @close="editClose('editForm')">
+      <el-form :model="editData" :rules="rules" ref="editForm">      
         <el-form-item label="成员账号" label-width='80px' prop='username'>
           <el-input auto-complete="off" v-model="editData.username"></el-input>
         </el-form-item>
@@ -91,8 +91,8 @@
         </el-form-item>          
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelEdit" type="danger">取 消</el-button>
-        <el-button type="primary" @click="confirmEdit('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="confirmEdit('editForm')">确 定</el-button>
+        <el-button @click="cancelEdit('editForm')" type="info">取 消</el-button>
       </div>
     </el-dialog>      
   </div>
@@ -154,6 +154,7 @@ export default {
     "app-tag": AppTag
   },
   methods: {
+
     /* 查看员工详情 */
     handleInfo(){
     },
@@ -161,12 +162,18 @@ export default {
     handleAdd(){
       this.addVisible = true;
     },
-    cancelAdd(){
+    cancelAdd(addForm){
       this.addData = {};
+      this.$refs[addForm].clearValidate();
       this.addVisible = false;
     },
-    confirmAdd(formName){
-      this.$refs[formName].validate((valid)=>{
+    addClose(addForm){
+      this.addData = {};
+      this.$refs[addForm].clearValidate();
+      this.addVisible = false;
+    },      
+    confirmAdd(addForm){
+      this.$refs[addForm].validate((valid)=>{
         if(valid){
           //表单验证成功
           this.$axios.post('/nmis/v1/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/staffs/create', {
@@ -202,12 +209,18 @@ export default {
       this.editData = JSON.parse(JSON.stringify(row)); //复制对象，需JSON这序列化，否则会赋值引用
       this.editVisible = true;      
     },
-    cancelEdit(){
+    cancelEdit(editForm){
       this.editData = {}
+      this.$refs[editForm].clearValidate();
       this.editVisible = false;
     }, 
-    confirmEdit(formName){
-      this.$refs[formName].validate((valid)=>{
+    editClose(editForm){
+      this.editData = {};
+      this.$refs[editForm].clearValidate();
+      this.editVisible = false;
+    },    
+    confirmEdit(editForm){
+      this.$refs[editForm].validate((valid)=>{
         if(valid){
           this.$axios.put('/nmis/v1/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/staffs/'+this.editData.id, {
             username:this.editData.username,
@@ -221,13 +234,14 @@ export default {
             this.editVisible = false;
             this.$message({ type: 'success',  message: '员工修改成功!'});
             this.getStaffList();
+            this.editVisible = false;
+            this.editData = {}            
           })
           .catch(err=>{
             this.$message.error(err);
             console.log(err);
           })
-          this.editVisible = false;
-          this.editData = {}
+
         }else{
           console.log('表单验证失败');
           return false;
@@ -236,7 +250,6 @@ export default {
     },       
     /* 删除员工 */
     handleDelete(index, row){
-      console.log(row);
       this.$confirm('此操作将删除员工: <strong style="color:#f47475;font-size:14px;"> 《'+row.username+'》</strong> , 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

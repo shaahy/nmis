@@ -34,9 +34,9 @@
     </div>
 
     <!-- 添加部门 -->
-    <el-dialog title="添加部门" :visible.sync="addVisible" width="600px">
-      <el-form :model="addData" :rules="rules">
-        <el-form-item label="部门属性" label-width='80px' required>
+    <el-dialog title="添加部门" :visible.sync="addVisible" width="600px" @close="closeAdd('addForm')">
+      <el-form :model="addData" :rules="rules" ref="addForm">
+        <el-form-item label="部门属性" label-width='80px' prop="attri">
           <el-select v-model="addData.attri" placeholder="请选择部门属性">
             <el-option label="医技" value="ME"></el-option>
             <el-option label="后勤" value="SU"></el-option>
@@ -52,16 +52,16 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelAdd" type="danger">取 消</el-button>
-        <el-button type="primary" @click="confirmAdd">确 定</el-button>
+        <el-button type="primary" @click="confirmAdd('addForm')">确 定</el-button>
+        <el-button type="info" @click="cancelAdd('addForm')" >取 消</el-button>
       </div>
     </el-dialog>    
 
 
     <!-- 编辑 -->
-    <el-dialog title="编辑部门" :visible.sync="editVisible" width="600px">
-      <el-form :model="editData" :rules="rules">
-        <el-form-item label="部门属性" prop="attri" label-width='80px' required>
+    <el-dialog title="编辑部门" :visible.sync="editVisible" width="600px" @close="closeEdit('editForm')">
+      <el-form :model="editData" :rules="rules" ref="editForm">
+        <el-form-item label="部门属性" label-width='80px' prop='attri'>
           <el-select v-model="editData.attri" placeholder="请选择部门属性">
             <el-option label="医技" value="ME"></el-option>
             <el-option label="后勤" value="SU"></el-option>
@@ -69,7 +69,7 @@
             <el-option label="其它" value="OT"></el-option>
           </el-select>
         </el-form-item>          
-        <el-form-item label="部门名称" label-width='80px'>
+        <el-form-item label="部门名称" label-width='80px' prop='name'>
           <el-input auto-complete="off" v-model="editData.name"></el-input>
         </el-form-item>
         <el-form-item label="职能描述" label-width='80px'>
@@ -77,8 +77,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelEdit" type="danger">取 消</el-button>
-        <el-button type="primary" @click="confirmEdit">提 交</el-button>
+        <el-button type="primary" @click="confirmEdit('editForm')">提 交</el-button>
+        <el-button type="info" @click="cancelEdit('editForm')" >取 消</el-button>
       </div>
     </el-dialog>    
   </div>
@@ -116,9 +116,12 @@ export default {
      },
      //验证规则
      rules:{
-       name:[
-         { required: true, message:"请输入部门/科室名称", trigger: 'blur' }
-       ]
+      name:[
+        { required: true, message:'请填写部门名称', trigger: 'blur'}
+      ],
+      attri:[
+        { required:true, message:'请选择部门属性', trigger:'change'}
+      ]
      }
     }
   },
@@ -130,28 +133,43 @@ export default {
     handleAdd(){
       this.addVisible = true;
     },
-    cancelAdd(){
+    cancelAdd(addForm){
       this.addData = {};
+      this.$refs[addForm].clearValidate();
       this.addVisible = false;
     },
-    confirmAdd(){
-      this.$axios.post('/nmis/v1/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/departments/create', {
-        name:this.addData.name,
-        desc:this.addData.desc,
-        attri:this.addData.attri
-      })
-      .then(res=>{
-        this.$checkResData(res);//先检查返回数据，若有错误则会抛出错误信息，此函数封闭在http/index.js中
-        this.addVisible = false;
-        this.$message({ type: 'success',  message: '部门添加成功!'});
-        this.getDepartmentList();
-      })
-      .catch(err=>{
-        this.$message.error(err);
-        console.log(err);
-      })
+    closeAdd(addForm){
+      this.addData = {};
+      this.$refs[addForm].clearValidate();
       this.addVisible = false;
-      this.addData = {}
+    },
+    confirmAdd(addForm){
+      this.$refs[addForm].validate(valid=>{
+        if(valid){
+          this.$axios.post('/nmis/v1/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/departments/create', {
+            name:this.addData.name,
+            desc:this.addData.desc,
+            attri:this.addData.attri
+          })
+          .then(res=>{
+            this.$checkResData(res);//先检查返回数据，若有错误则会抛出错误信息，此函数封闭在http/index.js中
+            this.addVisible = false;
+            this.$message({ type: 'success',  message: '部门添加成功!'});
+            this.getDepartmentList();
+          })
+          .catch(err=>{
+            this.$message.error(err);
+            console.log(err);
+          })
+          this.addVisible = false;
+          this.addData = {}
+        }else{
+          //表单验证失败
+          console.log('表单验证失败！');
+          return false;
+        }
+      })
+
     },
 
     /** 编辑部门操作 **/
@@ -159,26 +177,39 @@ export default {
       this.editData = JSON.parse(JSON.stringify(row)); //复制对象，需JSON这序列化，否则会赋值引用
       this.editVisible = true;
     },
-    cancelEdit(){
+    cancelEdit(editForm){
       this.editData = {}
+      this.$refs[editForm].clearValidate();
       this.editVisible = false;
     },
-    confirmEdit(){
-      this.$axios.put('/nmis/v1/hospitals/'+this.editData.organ+'/departments/'+this.editData.id,{
-        name:this.editData.name,
-        desc:this.editData.desc,
-        attri:this.editData.attri        
-      })
-          .then(res=>{
-            this.$checkResData(res);
-            this.getDepartmentList();
-            this.$message({ type: 'success',  message: '编辑成功!'});        
-            this.editVisible = false;
-            console.log(res)
+    closeEdit(editForm){
+      this.editData = {}
+      this.$refs[editForm].clearValidate();
+      this.editVisible = false;
+    },
+    confirmEdit(editForm){
+      this.$refs[editForm].validate(valid=>{
+        if(valid){
+          this.$axios.put('/nmis/v1/hospitals/'+this.editData.organ+'/departments/'+this.editData.id,{
+            name:this.editData.name,
+            desc:this.editData.desc,
+            attri:this.editData.attri        
           })
-          .catch(err=>{
-            this.$message({ type: 'error',  message: err});
-          })      
+              .then(res=>{
+                this.$checkResData(res);
+                this.getDepartmentList();
+                this.$message({ type: 'success',  message: '编辑成功!'});        
+                this.editVisible = false;
+              })
+              .catch(err=>{
+                this.$message({ type: 'error',  message: err});
+              })   
+        }else{
+          console.log('表单验证失败');
+          return false;
+        }
+      })
+   
     },
 
     /** 删除部门操作 **/
