@@ -25,7 +25,8 @@ const state = {
 		gender: '',  				//性别: U-未知, M-男, F-女,
 		acct_type: '',  		//账号类别, E-显式注册, I-邀请注册, O-第3方登录注册,
 		login_count: '',  	//登录次数		
-	}
+	},
+	
 }
 
 const getters= {
@@ -49,7 +50,8 @@ const mutations= {
 		state.staff = data.staff;
 		state.user = data.user;
 		//保存token
-		cookies.set("Authorization","Token "+ data.authtoken)
+		//cookies.set("Authorization","Token "+ data.authtoken)
+		localStorage.setItem('Authorization',"Token "+ data.authtoken)
 	}
 
 }

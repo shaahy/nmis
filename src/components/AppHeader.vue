@@ -21,6 +21,7 @@
       <ul>
         <li><img src="../assets/img/portrait.jpg" class="portrait"></li>
         <li><span class="name">{{ staff.name }}</span></li>
+        <li><el-button size='mini' plain @click='quit'>退出</el-button></li>
       </ul>
       
 
@@ -38,7 +39,10 @@ export default {
     }
   },
   methods:{
-
+    quit(){  
+      localStorage.removeItem('Authorization')            
+      this.$router.push({name:'loginLink'})
+    }
   },
   created(){
     //获取用户信息

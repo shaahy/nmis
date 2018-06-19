@@ -1,18 +1,23 @@
-
 import axios from 'axios';
-import cookies from 'vue-cookies' 
+//import cookies from 'vue-cookies' 
+import apiConfig from '../../config/api.config'
+
 
 //配置一(不携带Token,主要用于登陆)
 //axios.defaults.withCredentials=true; //让ajax携带cookie
+
 export const http_login = axios.create({
+  baseURL: apiConfig.baseUrl
 })
 
 //配置二(携带Token,主要用于用于后续请求)
 //axios.defaults.withCredentials=true; //让ajax携带cookie
 export const http = axios.create({
   headers:{
-     Authorization: cookies.get('Authorization')
-  }
+     //Authorization: cookies.get('Authorization')
+     Authorization: localStorage.getItem('Authorization')
+  },
+  baseURL: apiConfig.baseUrl
 })
 
 //验证http返回数据

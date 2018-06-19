@@ -1,6 +1,5 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
-
+import VueRouter from 'vue-router';
 //一级路由
 import Login from '@/views/Login' //登陆页
 import ProjectIndex from '@/views/project/Index'; //项目管理
@@ -17,11 +16,13 @@ import ManageDepartment from '@/views/manage/DepartMent'; //部门管理
 
 //三级路由
 
+//全局使用
 Vue.use(VueRouter)
 
 //路由配置
-export const router =  new VueRouter({
-  routes:[
+export const router = new VueRouter({
+  routes:
+  [
     {
       path:"/",
       component: Login,
@@ -74,6 +75,5 @@ export const router =  new VueRouter({
       ]      
     }
   ],
-  mode: "history"
-});
-
+  mode:'history',
+}) 

@@ -132,6 +132,7 @@ export default {
     /** 添加部门操作 **/
     handleAdd(){
       this.addVisible = true;
+      
     },
     cancelAdd(addForm){
       this.addData = {};
@@ -146,7 +147,7 @@ export default {
     confirmAdd(addForm){
       this.$refs[addForm].validate(valid=>{
         if(valid){
-          this.$axios.post('/nmis/v1/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/departments/create', {
+          this.$axios.post('/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/departments/create', {
             name:this.addData.name,
             desc:this.addData.desc,
             attri:this.addData.attri
@@ -190,7 +191,7 @@ export default {
     confirmEdit(editForm){
       this.$refs[editForm].validate(valid=>{
         if(valid){
-          this.$axios.put('/nmis/v1/hospitals/'+this.editData.organ+'/departments/'+this.editData.id,{
+          this.$axios.put('/hospitals/'+this.editData.organ+'/departments/'+this.editData.id,{
             name:this.editData.name,
             desc:this.editData.desc,
             attri:this.editData.attri        
@@ -223,7 +224,7 @@ export default {
       })
         //点击确定
         .then(() => {
-          this.$axios.delete('/nmis/v1/hospitals/'+row.organ+'/departments/'+row.id)
+          this.$axios.delete('/hospitals/'+row.organ+'/departments/'+row.id)
               .then(res=>{
                 this.$checkResData(res);
                 this.getDepartmentList();
@@ -244,13 +245,13 @@ export default {
     },
     //获取部门数据 
     getDepartmentList(){
-      this.$axios.get('/nmis/v1/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/departments')
+      this.$axios.get('/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/departments')
           .then(res=>{
             this.$checkResData(res);
             this.tableData = res.data.dept;
           })
           .catch(err=>{
-            console.log(err);
+            console.log('sfdfs:'+err);
       })
     }
   },
