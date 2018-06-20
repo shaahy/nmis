@@ -234,10 +234,9 @@ export default {
     }
   }
   .right{
-    height:250px;
-    padding:20px 0 20px 50px;
+    min-height:250px;
+    padding: 10px 0 50px 50px;
     width:calc(100% - 260px);
-    min-width: 980px;
     overflow: hidden;
     background-color: #fff;
     float:right;
@@ -245,6 +244,7 @@ export default {
       ul{
         li{
           display: inline-block;
+          margin-top: 33px;
           .node{
             position: relative;
             width:150px;
