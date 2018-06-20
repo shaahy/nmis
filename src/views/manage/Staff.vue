@@ -6,15 +6,17 @@
         <span class="title"><i></i> 数据列表</span>
         <el-button type="primary" @click="handleAdd">+ 添加员工</el-button>
         <el-button type="primary">导入</el-button>
-        <el-button type="primary">分配角色</el-button>
+        <el-button type="primary" @click="handlePermission">分配角色</el-button>
       </div>
       <div class="list">
-        <el-table :data="tableData" style="width: 100%">
+        <el-table :data="tableData" style="width: 100%" @select='handleSelect' @select-all='handleSelectAll'>
+          <el-table-column type="selection" porp='group' width="55"></el-table-column>          
           <el-table-column type="index" label="序号" width="80" sortable></el-table-column>
           <el-table-column prop="username" label="成员账号" width="150"></el-table-column>
           <el-table-column prop="staff_name" label="姓名" width="120"></el-table-column>
-          <el-table-column prop="email" label="邮箱" width="200"></el-table-column>
+          <el-table-column prop="email" label="邮箱" width="260"></el-table-column>
           <el-table-column prop="contact_phone" label="手机号" width="150"></el-table-column>
+          <el-table-column prop="group_name" label="角色" width="150"></el-table-column>
           <el-table-column prop="dept" label="所属部门"></el-table-column>
           <el-table-column label="操作" width="300" align="center">
           <template slot-scope="scope">
@@ -69,7 +71,7 @@
     </el-dialog>  
 
 
-    <!-- 编辑 -->
+    <!-- 编辑员工信息窗体 -->
     <el-dialog title="修改员工信息" :visible.sync="editVisible" width="600px"  @close="editClose('editForm')">
       <el-form :model="editData" :rules="rules" ref="editForm">      
         <el-form-item label="成员账号" label-width='80px' prop='username'>
@@ -94,7 +96,28 @@
         <el-button type="primary" @click="confirmEdit('editForm')">确 定</el-button>
         <el-button @click="cancelEdit('editForm')" type="info">取 消</el-button>
       </div>
-    </el-dialog>      
+    </el-dialog>   
+
+    <!-- 分配权限窗体 -->
+    <el-dialog title="分配角色" :visible.sync="permVisible" width="600px"  @close="permClose('permForm')">
+      <el-form :model="permData" :rules="rules" ref="permForm">
+        <el-form-item label="分配员工：">
+        {{selectedStaffNames}}
+        </el-form-item>      
+        <el-form-item label="角色选择" label-width='80px' prop='selectedRole'>
+          <el-select v-model="permData.selectedRole" placeholder="请选择角色">
+            <el-option label="项目分配者" value="1"></el-option>
+            <el-option label="普通员工" value="2"></el-option>
+            <el-option label="系统管理员" value="3"></el-option>
+          </el-select>
+        </el-form-item>          
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="confirmPerm('permForm')">确 定</el-button>
+        <el-button @click="cancelPerm('permForm')" type="info">取 消</el-button>
+      </div>
+    </el-dialog>  
+
   </div>
 </template>
 
@@ -127,9 +150,13 @@ export default {
      */
       addVisible: false,
       editVisible: false,
+      permVisible: false,
       depts: [],
       editData: {},
       addData: {},
+      permData: {
+        selectedRole: "" //角色分配
+      },
       rules: {
         email: [
           {
@@ -154,16 +181,45 @@ export default {
             trigger: "blur"
           }
         ],
-        dept: [{ required: true, message: "请选择所属部门", trigger: "change" }]
-      }
+        dept: [
+          { required: true, message: "请选择所属部门", trigger: "change" }
+        ],
+        selectedRole: [
+          { required: true, message: "请选择角色", trigger: "change" }
+        ]
+      },
+      selection: [] //已选中的行数据集合
     };
+  },
+  computed: {
+    //已选中的名字集合
+    selectedStaffNames: function() {
+      var list = "";
+      for (let index in this.selection) {
+        list += this.selection[index].staff_name + ", ";
+      }
+      list = list.trim().substring(0, list.length - 2);
+      return list;
+    },
+    selectedStaffIDs: function() {
+      var list = "";
+      for (let index in this.selection) {
+        list += this.selection[index].id + ", ";
+      }
+
+      list = list.substring(0, list.length - 2);
+      return list;
+    }
   },
   components: {
     "app-tag": AppTag
   },
   methods: {
     /* 查看员工详情 */
-    handleInfo() {},
+    handleInfo(index, row) {
+      console.log(row);
+    },
+
     /* 添加员工 */
     handleAdd() {
       this.addVisible = true;
@@ -215,6 +271,7 @@ export default {
         }
       });
     },
+
     /* 编辑员工 */
     handleEdit(index, row) {
       this.editData = JSON.parse(JSON.stringify(row)); //复制对象，需JSON这序列化，否则会赋值引用
@@ -265,6 +322,7 @@ export default {
         }
       });
     },
+
     /* 删除员工 */
     handleDelete(index, row) {
       this.$confirm(
@@ -300,6 +358,59 @@ export default {
           });
         });
     },
+
+    /* 分配权限 */
+    handlePermission() {
+      if (this.selectedStaffIDs != "") {
+        this.permVisible = true;
+      } else {
+        this.$message.error("请选择需要分配角色的员工!");
+      }
+    },
+    confirmPerm(permForm) {
+      this.$refs[permForm].validate(valid => {
+        if (valid) {
+          this.$axios
+            .put(
+              "/hospitals/" +
+                this.$store.getters["user/getStaff"].hospital +
+                "/staffs/change-permission",
+              {
+                perm_group_id: this.permData.selectedRole,
+                staffs: this.selectedStaffIDs
+              }
+            )
+            .then(res => {
+              this.permVisible = false;
+              this.getStaffList();
+              this.$message({ type: "success", message: "角色分配成功!" });
+            })
+            .catch(err => {
+              this.$message.error("角色分配失败!");
+              console.log(err);
+            });
+        } else {
+          //表单验证失败
+          console.log("表单验证失败！");
+          return false;
+        }
+      });
+    },
+    cancelPerm(permForm) {
+      this.$refs.permForm.clearValidate();
+      this.permVisible = false;
+    },
+    permClose(permForm) {
+      this.$refs.permForm.clearValidate();
+    },
+    handleSelect(selection, row) {
+      this.selection = selection;
+    },
+    handleSelectAll(selection) {
+      this.selection = selection;
+    },
+
+    /**从后端API获取数据 */
     //从后端获取员工信息
     getStaffList() {
       this.$axios
