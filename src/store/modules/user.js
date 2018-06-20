@@ -52,6 +52,7 @@ const mutations= {
 		//保存token
 		//cookies.set("Authorization","Token "+ data.authtoken)
 		localStorage.setItem('Authorization',"Token "+ data.authtoken)
+		localStorage.setItem('isLogin','true') //只能存储字符串
 	}
 
 }

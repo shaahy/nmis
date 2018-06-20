@@ -19,7 +19,7 @@ import ManageDepartment from '@/views/manage/DepartMent'; //部门管理
 //全局使用
 Vue.use(VueRouter)
 
-//路由配置
+//路由节点配置
 export const router = new VueRouter({
   routes:
   [
@@ -77,3 +77,23 @@ export const router = new VueRouter({
   ],
   mode:'history',
 }) 
+
+/*
+全局路由守卫
+1、进入所有路由前，判断登陆状态
+*/
+router.beforeEach((to, from, next)=>{
+  var isLogin = localStorage.getItem('isLogin')
+  if(to.path == '/'){ 
+    //如果是进入登陆页
+    next()
+  }else{
+    //如果是进入非登陆页,判断登陆状态
+    if(isLogin == 'true'){
+      next()
+    }else{
+      alert('请先登陆')
+      next('/')
+    }
+  }
+})

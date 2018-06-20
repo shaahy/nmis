@@ -40,8 +40,9 @@ export default {
   },
   methods:{
     quit(){  
-      localStorage.removeItem('Authorization')            
-      this.$router.push({name:'loginLink'})
+      localStorage.removeItem('Authorization')  //清除Token            
+      localStorage.setItem('isLogin', 'false')  //设置登陆状态为false
+      this.$router.push({name:'loginLink'})     //导航至登陆页
     }
   },
   created(){
