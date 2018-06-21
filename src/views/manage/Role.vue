@@ -2,7 +2,7 @@
   <div class="manage-department">
     <app-tag title="角色管理"></app-tag>
     <div class="row1">
-      <el-collapse v-model="activeNames" @change="handleChange">
+      <el-collapse v-model="activeNames">
         <el-collapse-item name="1">
           <template slot="title">
             <i class="icon_user"></i>

@@ -238,11 +238,7 @@ export default {
       this.$refs[addForm].validate(valid => {
         if (valid) {
           //表单验证成功
-          this.$axios
-            .post(
-              "/hospitals/" +
-                this.$store.getters["user/getStaff"].hospital +
-                "/staffs/create",
+          this.$axios.post(this.$api.create_staff(this.$store.getters["user/getStaff"].hospital),
               {
                 username: this.addData.username,
                 dept_id: this.addData.dept,
@@ -290,20 +286,13 @@ export default {
     confirmEdit(editForm) {
       this.$refs[editForm].validate(valid => {
         if (valid) {
-          this.$axios
-            .put(
-              "/hospitals/" +
-                this.$store.getters["user/getStaff"].hospital +
-                "/staffs/" +
-                this.editData.id,
-              {
-                username: this.editData.username,
-                dept_id: this.editData.dept,
-                staff_name: this.editData.staff_name,
-                contact_phone: this.editData.contact_phone,
-                email: this.editData.email
-              }
-            )
+          this.$axios.put(this.$api.update_staff(this.$store.getters["user/getStaff"].hospital,this.editData.id),{
+            username: this.editData.username,
+            dept_id: this.editData.dept,
+            staff_name: this.editData.staff_name,
+            contact_phone: this.editData.contact_phone,
+            email: this.editData.email
+            })
             .then(res => {
               this.$checkResData(res); //先检查返回数据，若有错误则会抛出错误信息，此函数封闭在http/index.js中
               this.editVisible = false;
@@ -339,8 +328,7 @@ export default {
       )
         //点击确定
         .then(() => {
-          this.$axios
-            .delete("/hospitals/" + row.hospital + "/staffs/" + row.id)
+          this.$axios.delete(this.$api.delete_staff(row.hospital, row.id))
             .then(res => {
               this.$checkResData(res);
               this.getStaffList();
@@ -370,16 +358,10 @@ export default {
     confirmPerm(permForm) {
       this.$refs[permForm].validate(valid => {
         if (valid) {
-          this.$axios
-            .put(
-              "/hospitals/" +
-                this.$store.getters["user/getStaff"].hospital +
-                "/staffs/change-permission",
-              {
-                perm_group_id: this.permData.selectedRole,
-                staffs: this.selectedStaffIDs
-              }
-            )
+          this.$axios.put(this.$api.change_staffs_permission(this.$store.getters["user/getStaff"].hospital), {
+            perm_group_id: this.permData.selectedRole,
+            staffs: this.selectedStaffIDs
+          })
             .then(res => {
               this.permVisible = false;
               this.getStaffList();
@@ -413,15 +395,10 @@ export default {
     /**从后端API获取数据 */
     //从后端获取员工信息
     getStaffList() {
-      this.$axios
-        .get(
-          "/hospitals/" +
-            this.$store.getters["user/getStaff"].hospital +
-            "/staffs"
-        )
+      this.$axios.get(this.$api.get_staff_list(this.$store.getters["user/getStaff"].hospital))
         .then(res => {
           this.$checkResData(res);
-          this.tableData = res.data.staff.slice(0);
+          this.tableData = res.data.staffs.slice(0);
         })
         .catch(err => {
           console.log(err);
@@ -429,12 +406,7 @@ export default {
     },
     //获取部门数据
     getDepartmentList() {
-      this.$axios
-        .get(
-          "/hospitals/" +
-            this.$store.getters["user/getStaff"].hospital +
-            "/departments"
-        )
+      this.$axios.get(this.$api.get_department_list(this.$store.getters['user/getStaff'].hospital))
         .then(res => {
           this.$checkResData(res);
           this.depts = res.data.dept.slice(0);

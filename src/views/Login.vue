@@ -22,8 +22,6 @@
       <el-row><a href="#" class="btn-forget">忘记密码？</a></el-row>
     </form>
 
-    <!-- <el-button @click="test">读取Vuex与localStorage数据</el-button>
-    <el-button @click="test2">删除localStorage中的数据</el-button> -->
   </div>
 </template>
 
@@ -40,9 +38,9 @@ export default {
   },
   methods: {
     onSubmit(){
-      
+      //console.log(this.$api.login);
       //登陆请求
-      this.$axios_login.post("/users/login",{
+      this.$axios_login.post(this.$api.login,{
         authkey:"username",
         username:this.userName,
         password:this.passWord
@@ -62,6 +60,7 @@ export default {
               //登陆成功
               this.isError = false;
               this.errMessage = "";
+              console.log(res.data);
               this.$store.commit('user/addLoginUser', res.data); 
               /*
                强制刷新一次页面，原因如下：

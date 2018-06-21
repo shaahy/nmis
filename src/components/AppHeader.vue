@@ -20,7 +20,7 @@
     <div class="right">
       <ul>
         <li><img src="../assets/img/portrait.jpg" class="portrait"></li>
-        <li><span class="name">{{ staff.name }}</span></li>
+        <li><span class="name">{{ staff.staff_name }} &nbsp;&nbsp;&nbsp;</span></li>
         <li><el-button size='mini' plain @click='quit'>退出</el-button></li>
       </ul>
       

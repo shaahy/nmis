@@ -147,7 +147,7 @@ export default {
     confirmAdd(addForm){
       this.$refs[addForm].validate(valid=>{
         if(valid){
-          this.$axios.post('/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/departments/create', {
+          this.$axios.post(this.$api.create_department(this.$store.getters['user/getStaff'].hospital), {
             name:this.addData.name,
             desc:this.addData.desc,
             attri:this.addData.attri
@@ -191,7 +191,7 @@ export default {
     confirmEdit(editForm){
       this.$refs[editForm].validate(valid=>{
         if(valid){
-          this.$axios.put('/hospitals/'+this.editData.organ+'/departments/'+this.editData.id,{
+          this.$axios.put(this.$api.update_department(this.editData.organ, this.editData.id),{
             name:this.editData.name,
             desc:this.editData.desc,
             attri:this.editData.attri        
@@ -215,7 +215,6 @@ export default {
 
     /** 删除部门操作 **/
     handleDelete(index, row) {
-      console.log(row);
       this.$confirm('此操作将删除部门: <strong style="color:#f47475;font-size:14px;"> 《'+row.name+'》</strong> , 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -224,14 +223,16 @@ export default {
       })
         //点击确定
         .then(() => {
-          this.$axios.delete('/hospitals/'+row.organ+'/departments/'+row.id)
+          // this.$axios.delete('/hospitals/'+row.organ+'/departments/'+row.id)
+          this.$axios.delete(this.$api.delete_department(row.organ, row.id))
               .then(res=>{
                 this.$checkResData(res);
                 this.getDepartmentList();
                 this.$message({ type: 'success',  message: '删除成功!'});
               })
               .catch(err=>{
-                this.$message({ type: 'error',  message: err});
+                console.log(err);
+                this.$message({ type: 'error',  message: '操作失败'});
               })
         
         })
@@ -245,7 +246,7 @@ export default {
     },
     //获取部门数据 
     getDepartmentList(){
-      this.$axios.get('/hospitals/'+this.$store.getters['user/getStaff'].hospital+'/departments')
+      this.$axios.get(this.$api.get_department_list(this.$store.getters['user/getStaff'].hospital))
           .then(res=>{
             this.$checkResData(res);
             this.tableData = res.data.dept;

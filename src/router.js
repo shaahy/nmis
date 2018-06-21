@@ -12,9 +12,11 @@ import EditFlow from '@/views/project/EditFlow'; //项目流程编辑
 import ManageRole from '@/views/manage/Role'; //角色管理
 import ManageStaff from '@/views/manage/Staff'; //人员管理
 import ManageDepartment from '@/views/manage/DepartMent'; //部门管理
-
+import CreateProjectIndex from '@/views/project/create/Index'; //项目申请路由页
 
 //三级路由
+import CreateDevice from '@/views/project/create/Device'; //硬件申请 
+import CreateSoftware from '@/views/project/create/Software'; //软件申请
 
 //全局使用
 Vue.use(VueRouter)
@@ -38,6 +40,24 @@ export const router = new VueRouter({
           path:"/project/my-project",
           component: Myproject,
           name: "myProjectLink"
+        },
+        {
+          path:"/project/create",
+          component: CreateProjectIndex,
+          name: "createProjectLink",
+          redirect: "/project/create/device",
+          children:[
+            {
+              path: "/project/create/device",
+              component:CreateDevice,
+              name:'createDeviceLink'
+            },
+            {
+              path: "/project/create/software",
+              component:CreateSoftware,
+              name:'CreateSoftwareLink'
+            },
+          ]
         },
         {
           path:"/project/assigned-project",

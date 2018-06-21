@@ -27,7 +27,7 @@
         <li class="act">进行中（1）</li>
         <li>已完成（1）</li>
       </ul>
-      <el-button type="primary">新建项目</el-button>
+      <el-button type="primary" @click="createProject">新建项目</el-button>
     </el-row>
     <el-row class="row3">
       <div class="item clearfix">
@@ -159,6 +159,11 @@ export default {
   },
   components:{
     "app-tag": AppTag
+  },
+  methods:{
+    createProject(){
+      this.$router.push('/project/create')
+    }
   }
 }
 </script>
