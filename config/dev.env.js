@@ -4,5 +4,5 @@ const prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  API_ROOT: '"/nmis/api/v1"'
+  API_ROOT: '"/nmis/api/v1"',
 })

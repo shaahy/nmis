@@ -17,7 +17,7 @@ module.exports = {
     cssSourceMap: true,                       //是否开启cssSourceMap
     proxyTable: {                             //跨域处理 
       '/nmis': {  
-          target: 'http://192.168.1.156',     //接口域名
+          target: 'http://192.168.1.156',     //接口域名!后端同学在调试本地时，请将配置修改为你本地的后台API接口地址
           changeOrigin: true,//是否跨域
           pathRewrite: {//地址重写：'/nmis' 替换 target（http://192.168.1.156）
               '^/nmis': '/' 

@@ -23,8 +23,6 @@
         <li><span class="name">{{ staff.staff_name }} &nbsp;&nbsp;&nbsp;</span></li>
         <li><el-button size='mini' plain @click='quit'>退出</el-button></li>
       </ul>
-      
-
     </div>
   </header>
 </template>
