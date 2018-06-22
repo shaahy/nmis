@@ -106,9 +106,7 @@
         </el-form-item>      
         <el-form-item label="角色选择" label-width='80px' prop='selectedRole'>
           <el-select v-model="permData.selectedRole" placeholder="请选择角色">
-            <el-option label="项目分配者" value="1"></el-option>
-            <el-option label="普通员工" value="2"></el-option>
-            <el-option label="系统管理员" value="3"></el-option>
+            <el-option v-for="perm in perms" :key="perm.id" :label="perm.name" :value="perm.id"></el-option>
           </el-select>
         </el-form-item>          
       </el-form>
@@ -151,7 +149,8 @@ export default {
       addVisible: false,
       editVisible: false,
       permVisible: false,
-      depts: [],
+      depts: [], //部门列表
+      perms:[], //角色列表
       editData: {},
       addData: {},
       permData: {
@@ -414,11 +413,21 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    getPermList(){
+      this.$axios.get(this.$api.get_group_list(this.$store.getters['user/getStaff'].hospital))
+        .then(res => {
+          this.perms  = res.data.group.slice(0);
+        })
+        .catch(err=>{
+          console.log(err);
+        })
     }
   },
   created() {
     this.getStaffList();
     this.getDepartmentList();
+    this.getPermList()
   }
 };
 </script>

@@ -13,7 +13,6 @@ Vue.prototype.$axios_login = http_login;
 Vue.prototype.$axios = http;
 Vue.prototype.$checkResData = checkResData;
 Vue.prototype.$api = apiConfig.api
-console.log(apiConfig.api);
 
 new Vue({
   el: '#app',
