@@ -22,6 +22,9 @@ export default {
         //获取权限组列表
         get_group_list: hid => `${API_ROOT}/hospitals/${hid}/groups`,
         //分配权限
-        change_staffs_permission: hid => `${API_ROOT}/hospitals/${hid}/staffs/change-permission`,        
+        change_staffs_permission: hid => `${API_ROOT}/hospitals/${hid}/staffs/change-permission`, 
+        //创建项目申请    
+        create_project_plan: `${API_ROOT}/projects/create`, 
+          
     }
 }

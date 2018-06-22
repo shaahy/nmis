@@ -7,6 +7,7 @@ import ManageIndex from '@/views/manage/Index'; //系统管理
 
 //二级路由
 import Myproject from '@/views/project/Myproject'; //我的项目
+import ManageProject from '@/views/project/ManageProject'; //我的项目
 import AssignedProject from '@/views/project/AssignedProject'; //项目分配
 import EditFlow from '@/views/project/EditFlow'; //项目流程编辑
 import ManageRole from '@/views/manage/Role'; //角色管理
@@ -17,6 +18,7 @@ import CreateProjectIndex from '@/views/project/create/Index'; //项目申请路
 //三级路由
 import CreateDevice from '@/views/project/create/Device'; //硬件申请 
 import CreateSoftware from '@/views/project/create/Software'; //软件申请
+import MedicalEquipment from '@/views/project/create/MedicalEquipment'; //软件申请
 
 //全局使用
 Vue.use(VueRouter)
@@ -42,6 +44,11 @@ export const router = new VueRouter({
           name: "myProjectLink"
         },
         {
+          path:"/project/manage-project",
+          component: ManageProject,
+          name: "manageProjectLink"
+        },
+        {
           path:"/project/create",
           component: CreateProjectIndex,
           name: "createProjectLink",
@@ -56,6 +63,11 @@ export const router = new VueRouter({
               path: "/project/create/software",
               component:CreateSoftware,
               name:'CreateSoftwareLink'
+            },
+            {
+              path: "/project/create/equipment",
+              component: MedicalEquipment,
+              name:'medicalEquipmentLink'
             },
           ]
         },
