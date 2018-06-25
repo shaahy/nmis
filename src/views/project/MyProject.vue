@@ -143,195 +143,227 @@
 </template>
 
 <script>
-import AppTag from '@/components/AppTag';
+import AppTag from "@/components/AppTag";
 export default {
-  name: 'my-project',
-  props:['text'],
-  data () {
+  name: "my-project",
+  props: ["text"],
+  data() {
     return {
-     form:{
-       date1:"",
-       date2:"",
-       region:"",
-       keyWord:"",
-     }
-    }
+      staff: {},
+      form: {
+        date1: "",
+        date2: "",
+        region: "",
+        keyWord: ""
+      },
+      projects: []
+      /*    { 项目列表数组中的数据字段格式
+      "id": 7,
+      "title": "设备更新"  #项目主题,
+      "purpose": "老化设备需要更新"  #申请原因,
+      "status": "SD"  #项目状态,
+      "creator_id": 7  #申请人id,
+      "creator_name": "test"  #申请人姓名,
+      "related_dept_id": 20181020  #申请科室id,
+      "related_dept_name": "信息科"  #申请科室名称,
+      "performer_id": 21  #项目负责人id,
+      "performer_name": "测试124"  #项目负责人名称,
+      "current_stone_id": NaN  #里程碑id,
+      "attached_flow": "{}"  #项目流程,
+      "ordered_devices":    
+      }
+*/
+    };
   },
-  components:{
+  components: {
     "app-tag": AppTag
   },
-  methods:{
-    createProject(){
-      this.$router.push('/project/create')
+  methods: {
+    createProject() {
+      this.$router.push("/project/create");
+    },
+    //获取所有项目
+    getProjects() {
+      this.$axios
+        .get(`${this.$api.my_projet_list}?hospital_id=${this.staff.organ_id}`)
+        .then(res => {
+          this.$checkResData(res);
+          this.projects = res.data.projects.slice(0);
+        });
     }
+  },
+  created() {
+    this.staff = this.$store.getters["user/getStaff"];
+    this.getProjects();
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
-.el-row{
+.el-row {
   background-color: #fff;
-  padding:10px 10px 10px 20px;
+  padding: 10px 10px 10px 20px;
 }
-.row1{
-  color:$font-color-cz3;
-  .search{
-    width:300px;
+.row1 {
+  color: $font-color-cz3;
+  .search {
+    width: 300px;
     float: right;
-    padding-right:20px;
+    padding-right: 20px;
   }
 }
-.row2{
-  margin-top:16px;
-  ul{
+.row2 {
+  margin-top: 16px;
+  ul {
     display: inline;
-    li{
+    li {
       display: inline-block;
-      padding:5px 20px;
-      color:$font-color-cz2;
+      padding: 5px 20px;
+      color: $font-color-cz2;
       font-size: 18px;
       cursor: pointer;
-      &.act{
-        color:$main-color;
+      &.act {
+        color: $main-color;
         font-weight: bold;
       }
     }
   }
-  .el-button{
-    display:block;
-    float:right;
+  .el-button {
+    display: block;
+    float: right;
   }
 }
-.row3{
+.row3 {
   background: none;
-  padding-left:0;
-  padding-right:0;
-  .item{ margin-top:16px; }
-  .left{
-    height:250px;
-    width:250px;
-    float:left;
+  padding-left: 0;
+  padding-right: 0;
+  .item {
+    margin-top: 16px;
+  }
+  .left {
+    height: 250px;
+    width: 250px;
+    float: left;
     position: relative;
     background-color: #fff;
-    .portrait{
-      width:100px;
+    .portrait {
+      width: 100px;
       border-radius: 50%;
-      margin:0 auto;
+      margin: 0 auto;
       display: block;
-      margin-top:38px;
+      margin-top: 38px;
       border: 5px solid $main-color;
     }
-    .applicant{
+    .applicant {
       text-align: center;
-      margin-top:8px;
+      margin-top: 8px;
     }
-    .project-name{
+    .project-name {
       font-size: 18px;
-      color:#333;
+      color: #333;
       text-align: center;
-      margin-top:16px;
+      margin-top: 16px;
     }
-    .date{
+    .date {
       font-size: 12px;
-      color:#999;
-      margin-top:5px;
+      color: #999;
+      margin-top: 5px;
       text-align: center;
     }
   }
-  .right{
-    min-height:250px;
+  .right {
+    min-height: 250px;
     padding: 10px 0 50px 50px;
-    width:calc(100% - 260px);
+    width: calc(100% - 260px);
     overflow: hidden;
     background-color: #fff;
-    float:right;
-    .flow{
-      ul{
-        li{
+    float: right;
+    .flow {
+      ul {
+        li {
           display: inline-block;
           margin-top: 33px;
-          .node{
+          .node {
             position: relative;
-            width:150px;
-            height:150px;
+            width: 150px;
+            height: 150px;
             border-bottom: 7px solid #ddd;
-            border-left:1px solid #e7e7e7;
-            .title{
+            border-left: 1px solid #e7e7e7;
+            .title {
               background-color: #e7e7e7;
-              width:130px;
-              color:#999;
+              width: 130px;
+              color: #999;
               display: block;
               text-align: center;
               height: 47px;
               line-height: 47px;
               font-size: 18px;
             }
-            .cicle{
+            .cicle {
               display: block;
-              width:20px;
+              width: 20px;
               height: 20px;
               position: absolute;
-              bottom:-10px;
-              left:-10px;
+              bottom: -10px;
+              left: -10px;
               background-color: #e7e7e7;
               border-radius: 50%;
-              i{
-                width:10px;
-                height:10px;
+              i {
+                width: 10px;
+                height: 10px;
                 border-radius: 50%;
                 display: block;
                 background-color: #fff;
                 position: absolute;
-                top:5px;
-                left:5px;
+                top: 5px;
+                left: 5px;
               }
             }
-            .file{
+            .file {
               display: block;
               position: absolute;
-              bottom:5px;
-              left:40px;
+              bottom: 5px;
+              left: 40px;
               font-size: 14px;
               cursor: pointer;
             }
           }
-          .date{
+          .date {
             font-size: 12px;
-            color:#666;
+            color: #666;
             position: absolute;
             bottom: -30px;
           }
 
           // 已完成状态
-          &.done{
-            .node{
+          &.done {
+            .node {
               border-left: 1px solid $main-color;
-              .title{
+              .title {
                 background-color: $main-color;
-                color:#fff;
+                color: #fff;
               }
-              .cicle{
+              .cicle {
                 background-color: $main-color;
               }
             }
           }
 
-          &.doing{
-            .node{
-            border-left: 1px solid #f47475;
-            .title{
-              background-color: #f47475;
-              color:#fff;
-            }
-            .cicle{
-              background-color: #f47475;
-            }            
+          &.doing {
+            .node {
+              border-left: 1px solid #f47475;
+              .title {
+                background-color: #f47475;
+                color: #fff;
+              }
+              .cicle {
+                background-color: #f47475;
+              }
             }
           }
         }
       }
     }
   }
-
 }
 </style>

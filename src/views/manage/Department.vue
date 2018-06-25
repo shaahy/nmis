@@ -93,13 +93,14 @@ export default {
      tableData:[],
      /* tableData中的数据格式
       [{
-          "id": 10001001  #科室ID,
-          "created_time": "2018-06-06 15:00:00"  #创建时间,
-          "name": "设备科"  #科室名称,
-          "contact": "13458892738"  #科室联系方式,
-          "desc": ""  #科室描述,
-          "attri": "SU"  #科室属性（ME：医技；SU：后勤；OF：行政）,
-          "organ": "20180606医院ID"
+        "id": 10001001  #科室ID,
+        "created_time": "2018-06-06 15:00:00"  #创建时间,
+        "name": "设备科"  #科室名称,
+        "contact": "13458892738"  #科室联系方式,
+        "desc": ""  #科室描述,
+        "attri": "SU"  #科室属性（ME：医技；SU：后勤；OF：行政; OT：其它）,
+        "organ_id": 20180606  #医院id,
+        "organ_name": "东都第一人民医院"  #医院名称
       }]     
      */
      addVisible:false,
@@ -147,7 +148,7 @@ export default {
     confirmAdd(addForm){
       this.$refs[addForm].validate(valid=>{
         if(valid){
-          this.$axios.post(this.$api.create_department(this.$store.getters['user/getStaff'].hospital), {
+          this.$axios.post(this.$api.create_department(this.$store.getters['user/getStaff'].organ_id), {
             name:this.addData.name,
             desc:this.addData.desc,
             attri:this.addData.attri
@@ -191,7 +192,7 @@ export default {
     confirmEdit(editForm){
       this.$refs[editForm].validate(valid=>{
         if(valid){
-          this.$axios.put(this.$api.update_department(this.editData.organ, this.editData.id),{
+          this.$axios.put(this.$api.update_department(this.editData.organ_id, this.editData.id),{
             name:this.editData.name,
             desc:this.editData.desc,
             attri:this.editData.attri        
@@ -203,7 +204,8 @@ export default {
                 this.editVisible = false;
               })
               .catch(err=>{
-                this.$message({ type: 'error',  message: err});
+                this.$message({ type: 'error',  message: '操作失败'});
+                console.log(err);
               })   
         }else{
           console.log('表单验证失败');
@@ -223,8 +225,8 @@ export default {
       })
         //点击确定
         .then(() => {
-          // this.$axios.delete('/hospitals/'+row.organ+'/departments/'+row.id)
-          this.$axios.delete(this.$api.delete_department(row.organ, row.id))
+          console.log(row);
+          this.$axios.delete(this.$api.delete_department(row.organ_id, row.id))
               .then(res=>{
                 this.$checkResData(res);
                 this.getDepartmentList();
@@ -246,7 +248,7 @@ export default {
     },
     //获取部门数据 
     getDepartmentList(){
-      this.$axios.get(this.$api.get_department_list(this.$store.getters['user/getStaff'].hospital))
+      this.$axios.get(this.$api.get_department_list(this.$store.getters['user/getStaff'].organ_id))
           .then(res=>{
             this.$checkResData(res);
             this.tableData = res.data.dept;

@@ -22,7 +22,7 @@ export const checkResData = function(res){
       errMessage += res.data.errors[key]
     }
     errMessage += res.data.msg;
-    console.log(res);
+    //console.log(res);
     console.log(errMessage);
     throw errMessage
   }

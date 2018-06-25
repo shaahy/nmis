@@ -17,7 +17,7 @@
           <el-table-column prop="email" label="邮箱" width="260"></el-table-column>
           <el-table-column prop="contact_phone" label="手机号" width="150"></el-table-column>
           <el-table-column prop="group_name" label="角色" width="150"></el-table-column>
-          <el-table-column prop="dept" label="所属部门"></el-table-column>
+          <el-table-column prop="dept_name" label="所属部门"></el-table-column>
           <el-table-column label="操作" width="300" align="center">
           <template slot-scope="scope">
             <el-button
@@ -58,8 +58,8 @@
         <el-form-item label="手机号" label-width='80px' prop='contact_phone'> 
           <el-input auto-complete="off" v-model="addData.contact_phone"></el-input>
         </el-form-item>
-        <el-form-item label="所属部门" label-width='80px' prop='dept'>
-          <el-select v-model="addData.dept" placeholder="请选择所属于部门">
+        <el-form-item label="所属部门" label-width='80px' prop='dept_id'>
+          <el-select v-model="addData.dept_id" placeholder="请选择所属于部门">
             <el-option v-for="dept in depts" :key="dept.id" :label="dept.name" :value="dept.id"></el-option>
           </el-select>
         </el-form-item>          
@@ -74,8 +74,8 @@
     <!-- 编辑员工信息窗体 -->
     <el-dialog title="修改员工信息" :visible.sync="editVisible" width="600px"  @close="editClose('editForm')">
       <el-form :model="editData" :rules="rules" ref="editForm">      
-        <el-form-item label="成员账号" label-width='80px' prop='username'>
-          <el-input auto-complete="off" v-model="editData.username"></el-input>
+        <el-form-item label="成员账号" label-width='80px'>
+          <el-input auto-complete="off" v-model="editData.username" disabled></el-input>
         </el-form-item>
         <el-form-item label="姓名" label-width='80px' prop='staff_name'>
           <el-input auto-complete="off" v-model="editData.staff_name"></el-input>
@@ -86,8 +86,8 @@
         <el-form-item label="手机号" label-width='80px' prop='contact_phone'> 
           <el-input auto-complete="off" v-model="editData.contact_phone"></el-input>
         </el-form-item>
-        <el-form-item label="所属部门" label-width='80px' prop='dept'>
-          <el-select v-model="editData.dept" placeholder="请选择所属于部门">
+        <el-form-item label="所属部门" label-width='80px' prop='dept_id'>
+          <el-select v-model="editData.dept_id" placeholder="请选择所属于部门">
             <el-option v-for="dept in depts" :key="dept.id" :label="dept.name" :value="dept.id"></el-option>
           </el-select>
         </el-form-item>          
@@ -128,22 +128,22 @@ export default {
       tableData: [],
       /* tableData中的数据格式
       [{
-        "id": 20181001,
-        "hospital": 20180606,
-        "hospital_name": "东都第一人民医院",
-        "dept": 10001001,
-        "dept_name": "信息科",
-        "staff_name": "腾主任1",
-        "staff_title": "信息科主任",
-        "user": 20101212,
-        "username": "yulaishini",
-        "is_admin": false,
-        "group": null,
-        "group_name": "",
-        "group_cate": "",
-        "contact_phone": "13899212321",
-        "email": "teng@exmple.com",
-        "created_time": "2018-06-06 15:00:00"
+        "id": 20161013  #staff_id,
+        "organ_id": 20111001  #员工所属医疗机构id, 若员工无归属机构, 则该字段为空,
+        "organ_name": "东都第一人民医院"  #员工所属医疗机构名称,
+        "dept_id": 20112312  #所属科室id,
+        "dept_name": "信息科"  #部门名称,
+        "name": "周传雄"  #职员姓名,
+        "title": "信息科主任"  #职员岗位名称,
+        "contact": "13628038741"  #联系电话,
+        "email": "zcx@nmis.com"  #email地址,
+        "created_time": "2017-02-08 16:03:52",
+        "user_id": 20101212  #用户ID,
+        "username": "yulaishini"  #用户名,
+        "group_id": 4001  #权限组id,
+        "group_name": " 项目分配人"  #权限组名称,
+        "group_cate": "GPA"  #权限组类别, GPA: 项目分配者权限, GNS: 普通员工,
+        "is_admin": true  #是否为医疗机构管理员	 
       }]     
      */
       addVisible: false,
@@ -180,7 +180,7 @@ export default {
             trigger: "blur"
           }
         ],
-        dept: [
+        dept_id: [
           { required: true, message: "请选择所属部门", trigger: "change" }
         ],
         selectedRole: [
@@ -237,10 +237,10 @@ export default {
       this.$refs[addForm].validate(valid => {
         if (valid) {
           //表单验证成功
-          this.$axios.post(this.$api.create_staff(this.$store.getters["user/getStaff"].hospital),
+          this.$axios.post(this.$api.create_staff(this.$store.getters["user/getStaff"].organ_id),
               {
                 username: this.addData.username,
-                dept_id: this.addData.dept,
+                dept_id: this.addData.dept_id,
                 staff_name: this.addData.staff_name,
                 contact_phone: this.addData.contact_phone,
                 email: this.addData.email,
@@ -285,14 +285,15 @@ export default {
     confirmEdit(editForm) {
       this.$refs[editForm].validate(valid => {
         if (valid) {
-          this.$axios.put(this.$api.update_staff(this.$store.getters["user/getStaff"].hospital,this.editData.id),{
+          this.$axios.put(this.$api.update_staff(this.$store.getters["user/getStaff"].organ_id,this.editData.id),{
             username: this.editData.username,
-            dept_id: this.editData.dept,
+            dept_id: this.editData.dept_id,
             staff_name: this.editData.staff_name,
             contact_phone: this.editData.contact_phone,
             email: this.editData.email
             })
             .then(res => {
+              console.log(res);
               this.$checkResData(res); //先检查返回数据，若有错误则会抛出错误信息，此函数封闭在http/index.js中
               this.editVisible = false;
               this.$message({ type: "success", message: "员工修改成功!" });
@@ -327,7 +328,7 @@ export default {
       )
         //点击确定
         .then(() => {
-          this.$axios.delete(this.$api.delete_staff(row.hospital, row.id))
+          this.$axios.delete(this.$api.delete_staff(row.organ_id, row.id))
             .then(res => {
               this.$checkResData(res);
               this.getStaffList();
@@ -357,7 +358,7 @@ export default {
     confirmPerm(permForm) {
       this.$refs[permForm].validate(valid => {
         if (valid) {
-          this.$axios.put(this.$api.change_staffs_permission(this.$store.getters["user/getStaff"].hospital), {
+          this.$axios.put(this.$api.change_staffs_permission(this.$store.getters["user/getStaff"].organ_id), {
             perm_group_id: this.permData.selectedRole,
             staffs: this.selectedStaffIDs
           })
@@ -394,7 +395,7 @@ export default {
     /**从后端API获取数据 */
     //从后端获取员工信息
     getStaffList() {
-      this.$axios.get(this.$api.get_staff_list(this.$store.getters["user/getStaff"].hospital))
+      this.$axios.get(this.$api.get_staff_list(this.$store.getters["user/getStaff"].organ_id))
         .then(res => {
           this.$checkResData(res);
           this.tableData = res.data.staffs.slice(0);
@@ -405,7 +406,7 @@ export default {
     },
     //获取部门数据
     getDepartmentList() {
-      this.$axios.get(this.$api.get_department_list(this.$store.getters['user/getStaff'].hospital))
+      this.$axios.get(this.$api.get_department_list(this.$store.getters['user/getStaff'].organ_id))
         .then(res => {
           this.$checkResData(res);
           this.depts = res.data.dept.slice(0);
@@ -415,7 +416,7 @@ export default {
         });
     },
     getPermList(){
-      this.$axios.get(this.$api.get_group_list(this.$store.getters['user/getStaff'].hospital))
+      this.$axios.get(this.$api.get_group_list(this.$store.getters['user/getStaff'].organ_id))
         .then(res => {
           this.perms  = res.data.group.slice(0);
         })

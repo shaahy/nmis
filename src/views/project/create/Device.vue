@@ -96,20 +96,24 @@ export default {
         dev.planned_price = parseFloat(this.formData.devList[key].price);
         devs.push(dev)
       }
-      // console.log(this.formData.devList);
-      // console.log(devs);
       this.$axios.post(this.$api.create_project_plan,{
-        hospital_id: this.staff.hospital,
+        hospital_id: this.staff.organ_id,
         project_title: this.formData.projectName,
         purpose: this.formData.resion,
         creator_id: this.staff.id,
-        related_dept_id: this.staff.dept,
+        related_dept_id: this.staff.dept_id,
         ordered_devices:devs
       })
         .then(res=>{
+          this.$checkResData(res);
           console.log(res);
+          this.$message({type:'success', message:'项目申请成功'})
+          this.$router.push({name: 'myProjectLink'})
         })
-
+        .catch(err=>{
+          this.$message.error('操作失败')
+          console.log(err);
+        })
     }
   },
   created(){

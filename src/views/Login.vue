@@ -47,6 +47,7 @@ export default {
       })
           .then(res=>{
             //判断登陆是否成功
+            //console.log(res);
             if(res.data.code !== 10000){
               //登陆错误
               this.isError = true;
