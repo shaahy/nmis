@@ -36,7 +36,7 @@
       <el-form :model="assignedData" :rules="rules" ref="AssignedForm">
         <el-form-item label="负责人" label-width='80px' prop='staff_name'>
           <el-autocomplete
-            class="inline-input"
+            class="wd65"
             value-key = "staff_name"
             v-model="assignedData.staff_name"
             :fetch-suggestions="querySearch"
@@ -47,6 +47,25 @@
             </template>          
           </el-autocomplete>
         </el-form-item> 
+        <el-form-item label="分配流程" label-width='80px' required>
+          <el-select v-model="assignedData.flow_id" placeholder="请选择项目流程" class="wd65">
+            <el-option v-for="flow in hospitalData.flows" :key="flow.id" :label="flow.title" :value="flow.id"></el-option>
+          </el-select>
+        </el-form-item> 
+        <el-form-item label="项目时间" label-width='80px' required>
+          <el-date-picker
+            v-model="assignedData.date"
+            type="daterange"
+            value-format='yyyy-MM-dd'
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="截止日期"
+            class="wd65">
+          </el-date-picker>        
+        </el-form-item>  
+        <el-form-item label="协助人员" label-width='80px'>
+          <el-input auto-complete="off" v-model="assignedData.assistant" class="wd65"></el-input>
+        </el-form-item>              
       </el-form>       
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmAssigned('AssignedForm')">确 定</el-button>
@@ -82,11 +101,37 @@ export default {
   },
   methods: {
     /* 分配负责人 */
-    AssignedPM(){
+    AssignedPM(index, row){
       this.assignedVisible = true;
+      this.assignedData.project_id = row.id
     },
     confirmAssigned(AssignedForm){
       console.log(this.assignedData);
+      this.$refs[AssignedForm].validate(valid=>{
+        if(valid){
+          var url = `${this.$api.dispatch_project_plan(this.assignedData.project_id)}`
+          // console.log(this.assignedData.date[1]);
+          this.$axios
+            .post(url, {
+              performer_id: this.assignedData.staff.id,
+              flow_id: this.assignedData.flow_id,
+              expired_time: this.assignedData.date[1]+''
+            })
+            .then(res=>{
+              console.log(res);
+              this.$checkResData(res);
+              this.$message({ type: 'success',  message: '项目分配成功!'});
+              this.assignedData = {};
+              this.assignedVisible = false;
+              this.getProjects();
+
+            })
+            .catch(err=>{
+              this.$message.error('项目分配失败');
+              console.log(err);
+            })
+        }
+      })
     },
     cancelAssigned(AssignedForm){
       this.assignedData = {};
@@ -108,7 +153,7 @@ export default {
     },   
     handleSelect(item){
       //console.log(item);
-      this.assignedData = item;
+      this.assignedData.staff = item;
     }, 
 
     //获取待分配项目数据
@@ -189,7 +234,5 @@ export default {
     margin-top: 2px;
   }
 }
-.inline-input{
-  width:70%;
-}
+.wd65 {width:75%;}
 </style>

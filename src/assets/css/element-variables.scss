@@ -5,3 +5,14 @@ $--color-primary: #4cbdb4;
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
 @import "~element-ui/packages/theme-chalk/src/index";
+
+.el-step__head.is-success {
+  color: #4cbdb4;
+  border-color: #4cbdb4;
+}
+.el-step__title.is-success {
+  color: #4cbdb4;
+}
+.el-step__description.is-success{
+  color: #4cbdb4;
+}

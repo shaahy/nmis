@@ -1,143 +1,43 @@
 <template>
   <div class="my-project">
     <app-tag title="我的项目"></app-tag>
-    <el-row class="row1">
-      <el-select v-model="form.region" placeholder="里程碑状态">
-        <el-option label="待启动" value="待启动"></el-option>
-        <el-option label="项目前期准备" value="项目前期准备"></el-option>
-        <el-option label="标书会签" value="标书会签"></el-option>
-        <el-option label="合同会签" value="合同会签"></el-option>
-        <el-option label="项目实施" value="项目实施"></el-option>
-        <el-option label="完成" value="完成"></el-option>
-      </el-select>      
-      <el-date-picker type="date" placeholder="选择日期" v-model="form.date1" style="width: 214px"></el-date-picker>
-      <span>至</span>
-      <el-date-picker type="date" placeholder="选择日期" v-model="form.date2" style="width: 214px"></el-date-picker>
+    <el-row class="row2">
       <div class="search">
         <el-input placeholder="请输入内容" v-model="form.keyWord">
           <el-button slot="append" icon="el-icon-search"></el-button>        
         </el-input> 
-      </div>
-     
-    </el-row>
-    <el-row class="row2">
+      </div>        
       <ul>
         <li>项目总数（3）</li>
         <li>待启动（1）</li>
         <li class="act">进行中（1）</li>
         <li>已完成（1）</li>
       </ul>
-      <el-button type="primary" @click="createProject">新建项目</el-button>
+      <el-button type="primary" @click="createProject">+ 新建项目</el-button>
     </el-row>
     <el-row class="row3">
-      <div class="item clearfix">
+      <div v-for="project in projects" :key='project.id' class="item clearfix">
         <div class="left">
-          <img src="../../assets/img/portrait.jpg" alt="" class="portrait">
-          <p class="applicant">申请人：<strong>张三</strong></p>
-          <h2 class="project-name">信息管理服务系统</h2>
-          <p class="date">2018年06月01日—2028年06月01日</p>
+          <div class="portrait">张</div>
+          <div class="info">
+            <h2 class="project-name"> {{project.title}} </h2>
+            <p class="applicant">负责人：<strong> {{ project.performer_name}} </strong></p>
+            <p class="date">{{project.created_time | format-date}} 至 {{project.expired_time | format-date}} </p>
+          </div>
         </div>
         <div class="right">
           <div class="flow">
-            <ul>
-              <li class="done">
-                <div class="node">
-                  <span class="title">待启动</span>
-                  <span class="cicle"><i></i></span>
-                  <span class="file">文档（2）</span>
-                  <span class="date">2018.10.05</span>
-                </div>
-              </li>
-              <li class="doing">
-                <div class="node">
-                  <span class="title">项目前期准备</span>
-                  <span class="cicle"><i></i></span>
-                  <span class="file">文档（2）</span>
-                  <span class="date">2018.10.05</span>
-                </div>
-              </li>  
-              <li>
-                <div class="node">
-                  <span class="title">标书会签</span>
-                  <span class="cicle"><i></i></span>
-                  <span class="file">文档（2）</span>
-                  <span class="date">2018.10.05</span>
-                </div>
-              </li>                                                                   
-              <li>
-                <div class="node">
-                  <span class="title">合同会签</span>
-                  <span class="cicle"><i></i></span>
-                  <span class="file">文档（2）</span>
-                  <span class="date">2018.10.05</span>
-                </div>
-              </li>                                                                   
-              <li>
-                <div class="node">
-                  <span class="title">已完成</span>
-                  <span class="cicle"><i></i></span>
-                  <span class="file">文档（2）</span>
-                  <span class="date">2018.10.05</span>
-                </div>
-              </li>                                                                   
-            </ul>
+            <el-steps :active="1" finish-status="success" align-center space='150px'>
+              <el-step 
+                v-for="step in project.attached_flow.milestones" 
+                :key="step.id" 
+                :title="step.title" 
+                :description="step.created_time | format-date">
+              </el-step>
+            </el-steps>              
           </div>
         </div>
-      </div>
-      <div class="item clearfix">
-        <div class="left">
-          <img src="../../assets/img/portrait.jpg" alt="" class="portrait">
-          <p class="applicant">申请人：<strong>张三</strong></p>
-          <h2 class="project-name">信息管理服务系统</h2>
-          <p class="date">2018年06月01日—2028年06月01日</p>
-        </div>
-        <div class="right">
-          <div class="flow">
-            <ul>
-              <li class="done">
-                <div class="node">
-                  <span class="title">待启动</span>
-                  <span class="cicle"><i></i></span>
-                  <span class="file">文档（2）</span>
-                  <span class="date">2018.10.05</span>
-                </div>
-              </li>
-              <li class="doing">
-                <div class="node">
-                  <span class="title">项目前期准备</span>
-                  <span class="cicle"><i></i></span>
-                  <span class="file">文档（2）</span>
-                  <span class="date">2018.10.05</span>
-                </div>
-              </li>  
-              <li>
-                <div class="node">
-                  <span class="title">标书会签</span>
-                  <span class="cicle"><i></i></span>
-                  <span class="file">文档（2）</span>
-                  <span class="date">2018.10.05</span>
-                </div>
-              </li>                                                                   
-              <li>
-                <div class="node">
-                  <span class="title">合同会签</span>
-                  <span class="cicle"><i></i></span>
-                  <span class="file">文档（2）</span>
-                  <span class="date">2018.10.05</span>
-                </div>
-              </li>                                                                   
-              <li>
-                <div class="node">
-                  <span class="title">已完成</span>
-                  <span class="cicle"><i></i></span>
-                  <span class="file">文档（2）</span>
-                  <span class="date">2018.10.05</span>
-                </div>
-              </li>                                                                   
-            </ul>
-          </div>
-        </div>
-      </div>      
+      </div>    
     </el-row>
   </div>
 </template>
@@ -151,8 +51,6 @@ export default {
     return {
       staff: {},
       form: {
-        date1: "",
-        date2: "",
         region: "",
         keyWord: ""
       },
@@ -188,6 +86,7 @@ export default {
         .get(`${this.$api.my_projet_list}?hospital_id=${this.staff.organ_id}`)
         .then(res => {
           this.$checkResData(res);
+          console.log(res);
           this.projects = res.data.projects.slice(0);
         });
     }
@@ -204,18 +103,11 @@ export default {
   background-color: #fff;
   padding: 10px 10px 10px 20px;
 }
-.row1 {
-  color: $font-color-cz3;
-  .search {
-    width: 300px;
-    float: right;
-    padding-right: 20px;
-  }
-}
 .row2 {
   margin-top: 16px;
+  padding: 15px 15px 15px 20px;
   ul {
-    display: inline;
+    display: inline-block;
     li {
       display: inline-block;
       padding: 5px 20px;
@@ -228,6 +120,11 @@ export default {
       }
     }
   }
+  .search {
+    width: 300px;
+    display: inline-block;
+    padding-right: 20px;
+  }  
   .el-button {
     display: block;
     float: right;
@@ -238,132 +135,79 @@ export default {
   padding-left: 0;
   padding-right: 0;
   .item {
-    margin-top: 16px;
+    margin-top: 10px;
   }
   .left {
-    height: 250px;
-    width: 250px;
+    height: 115px;
+    width: 285px;
     float: left;
+    padding: 0 10px;
     position: relative;
     background-color: #fff;
     .portrait {
-      width: 100px;
-      border-radius: 50%;
-      margin: 0 auto;
-      display: block;
-      margin-top: 38px;
-      border: 5px solid $main-color;
-    }
-    .applicant {
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
       text-align: center;
-      margin-top: 8px;
-    }
-    .project-name {
       font-size: 18px;
-      color: #333;
-      text-align: center;
-      margin-top: 16px;
+      border-radius: 50%;
+      background-color: #dbf2f0;
+      color:#109187;
+      margin: 0 5px;
+      display: block;
+      font-weight: bold;
+      float:left;
+      margin-top: 32px;
     }
-    .date {
-      font-size: 12px;
-      color: #999;
-      margin-top: 5px;
-      text-align: center;
+    .info{
+      width:calc(100% - 90px);
+      display: block;
+      margin-left:15px;
+      float:left;
+      .applicant {
+        margin-top: 4px;
+        margin-bottom: 0px;
+        font-size: 14px;
+        color:#666;
+      }
+      .project-name {
+        display: block;
+        font-size: 16px;
+        color: #333;
+        margin-top: 22px;
+        margin-bottom: 0;
+        
+      }
+      .date {
+        font-size: 12px;
+        color: #999;
+        margin-top:4px;
+        margin-bottom:0px;
+      }      
     }
+
   }
   .right {
-    min-height: 250px;
-    padding: 10px 0 50px 50px;
-    width: calc(100% - 260px);
+    min-height: 115px;
+    padding: 19px 15px;
+    width: calc(100% - 300px);
     overflow: hidden;
     background-color: #fff;
     float: right;
     .flow {
-      ul {
-        li {
-          display: inline-block;
-          margin-top: 33px;
-          .node {
-            position: relative;
-            width: 150px;
-            height: 150px;
-            border-bottom: 7px solid #ddd;
-            border-left: 1px solid #e7e7e7;
-            .title {
-              background-color: #e7e7e7;
-              width: 130px;
-              color: #999;
-              display: block;
-              text-align: center;
-              height: 47px;
-              line-height: 47px;
-              font-size: 18px;
-            }
-            .cicle {
-              display: block;
-              width: 20px;
-              height: 20px;
-              position: absolute;
-              bottom: -10px;
-              left: -10px;
-              background-color: #e7e7e7;
-              border-radius: 50%;
-              i {
-                width: 10px;
-                height: 10px;
-                border-radius: 50%;
-                display: block;
-                background-color: #fff;
-                position: absolute;
-                top: 5px;
-                left: 5px;
-              }
-            }
-            .file {
-              display: block;
-              position: absolute;
-              bottom: 5px;
-              left: 40px;
-              font-size: 14px;
-              cursor: pointer;
-            }
-          }
-          .date {
-            font-size: 12px;
-            color: #666;
-            position: absolute;
-            bottom: -30px;
-          }
 
-          // 已完成状态
-          &.done {
-            .node {
-              border-left: 1px solid $main-color;
-              .title {
-                background-color: $main-color;
-                color: #fff;
-              }
-              .cicle {
-                background-color: $main-color;
-              }
-            }
-          }
-
-          &.doing {
-            .node {
-              border-left: 1px solid #f47475;
-              .title {
-                background-color: #f47475;
-                color: #fff;
-              }
-              .cicle {
-                background-color: #f47475;
-              }
-            }
-          }
-        }
-      }
+    }
+  }
+}
+@media screen and (max-width:1366px){/* 手机 */
+  .row2{
+    li{
+      padding:5px 10px !important;
     }
   }
 }
 </style>
+<style lang="sass">
+
+</style>
+

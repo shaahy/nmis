@@ -31,6 +31,10 @@ export default {
         get_pending_projects_list:`${API_ROOT}/projects/allot-projects`,
         //返回医院全局数据
         hospital_global_data: hid => `${API_ROOT}/hospitals/${hid}/global-data`,
+        //分配项目
+        dispatch_project_plan: project_id => `${API_ROOT}/projects/${project_id}/dispatch`,
+        //创建项目流程
+        create_project_flow: `${API_ROOT}/projects/flows/create`
 
           
     }
