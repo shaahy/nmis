@@ -110,7 +110,6 @@ export default {
       this.$refs[AssignedForm].validate(valid=>{
         if(valid){
           var url = `${this.$api.dispatch_project_plan(this.assignedData.project_id)}`
-          // console.log(this.assignedData.date[1]);
           this.$axios
             .post(url, {
               performer_id: this.assignedData.staff.id,
@@ -159,7 +158,7 @@ export default {
     //获取待分配项目数据
     getProjects() {
       this.$axios
-        .get(`${this.$api.get_pending_projects_list}?hospital_id=${this.staff.organ_id}`)
+        .get(`${this.$api.get_projet_list}?organ_id=${this.staff.organ_id}&type=undispatch`)        
         .then(res => {
           this.$checkResData(res);
           this.projects = res.data.projects.slice(0);

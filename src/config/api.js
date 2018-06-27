@@ -26,9 +26,7 @@ export default {
         //创建项目申请    
         create_project_plan: `${API_ROOT}/projects/create`, 
         //获取我的项目中项目列表，带筛选条件
-        my_projet_list:`${API_ROOT}/projects/my-projects`,
-        //获取待分配项目列表
-        get_pending_projects_list:`${API_ROOT}/projects/allot-projects`,
+        get_projet_list:`${API_ROOT}/projects/`,
         //返回医院全局数据
         hospital_global_data: hid => `${API_ROOT}/hospitals/${hid}/global-data`,
         //分配项目

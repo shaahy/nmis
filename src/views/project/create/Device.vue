@@ -28,7 +28,7 @@
         </div>
         <div class="right">
           <div class="title">设备明细列表</div>
-            <div class="item" v-for="dev in formData.devList" :key="dev.name">
+            <div class="item" v-for="(dev, index) in formData.devList" :key="index">
               <el-input placeholder="设备名" class="only-bottom-border name" v-model="dev.name"></el-input>
               <el-input placeholder="设备型号" class="only-bottom-border type"  v-model="dev.type"></el-input>
               <el-input placeholder="设备数量" class="only-bottom-border num"  v-model="dev.num"></el-input>
@@ -97,7 +97,7 @@ export default {
         devs.push(dev)
       }
       this.$axios.post(this.$api.create_project_plan,{
-        hospital_id: this.staff.organ_id,
+        organ_id: this.staff.organ_id,
         project_title: this.formData.projectName,
         purpose: this.formData.resion,
         creator_id: this.staff.id,

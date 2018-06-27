@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="row2">
-      <div v-for="step in addData.milestones" :key="addData.milestones.indexOf(step)" class="step">
+      <div v-for="(step, index) in addData.milestones" :key="index" class="step">
         <el-input v-model="step.title" placeholder="请输入里程碑名称"></el-input>
       </div>
       <el-button icon="el-icon-plus" circle size="medium" @click="handleAddStep"></el-button>

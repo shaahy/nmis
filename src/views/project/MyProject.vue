@@ -8,17 +8,17 @@
         </el-input> 
       </div>        
       <ul>
-        <li>项目总数（3）</li>
-        <li>待启动（1）</li>
-        <li class="act">进行中（1）</li>
-        <li>已完成（1）</li>
+        <li class="act">项目总数（{{this.projects.length}}）</li>
+        <li>待启动（）</li>
+        <li>进行中（）</li>
+        <li>已完成（）</li>
       </ul>
       <el-button type="primary" @click="createProject">+ 新建项目</el-button>
     </el-row>
     <el-row class="row3">
       <div v-for="project in projects" :key='project.id' class="item clearfix">
         <div class="left">
-          <div class="portrait">张</div>
+          <div class="portrait">{{ project.title.slice(0,1) }}</div>
           <div class="info">
             <h2 class="project-name"> {{project.title}} </h2>
             <p class="applicant">负责人：<strong> {{ project.performer_name}} </strong></p>
@@ -27,14 +27,15 @@
         </div>
         <div class="right">
           <div class="flow">
-            <el-steps :active="1" finish-status="success" align-center space='150px'>
+            <el-steps :active="getActiveMilestones(project)" finish-status="success" align-center space='150px'>
               <el-step 
-                v-for="step in project.attached_flow.milestones" 
-                :key="step.id" 
-                :title="step.title" 
-                :description="step.created_time | format-date">
+                v-for="milestone in project.attached_flow.milestones"
+                :key="milestone.id" 
+                :title="milestone.title" 
+                :description="getStepDate(milestone.flow_id, milestone.id) | format-date">
               </el-step>
-            </el-steps>              
+            </el-steps> 
+            <h3 v-if="!project.isHasFlow" style="margin-left:50px;color:red;">没有分配流程</h3>             
           </div>
         </div>
       </div>    
@@ -69,6 +70,7 @@ export default {
       "current_stone_id": NaN  #里程碑id,
       "attached_flow": "{}"  #项目流程,
       "ordered_devices":    
+      "isHasFlow":false; 是否已分配流程
       }
 */
     };
@@ -77,17 +79,56 @@ export default {
     "app-tag": AppTag
   },
   methods: {
+    //创建项目
     createProject() {
       this.$router.push("/project/create");
+    },
+    //获取项目正在进行的里程碑索引值 
+    getActiveMilestones(project){
+      if(project.attached_flow.id){
+        //console.log('22');
+        let milestones =  project.attached_flow.milestones;
+        for(let i=0; i < milestones.length; i++){
+          if(project.current_stone_id === milestones[i].id){
+            return (i);
+          }
+        }        
+      }else{
+        return 0;
+      }
+    },
+    //获取里程碑的完成时间
+    getStepDate(flow_id, milestone_id){
+      if(flow_id){
+        for(let i in this.projects){
+          let id = this.projects[i].attached_flow.id;
+          if(id && id === flow_id){
+            var records = this.projects[i].milestone_records;
+            for(let j in records){
+              if(milestone_id === records[j].milestone_id){
+                return records[j].created_time;
+              }
+            }
+          }
+        }
+      }
+      //当前没有分配项目
+      return "";
+
     },
     //获取所有项目
     getProjects() {
       this.$axios
-        .get(`${this.$api.my_projet_list}?hospital_id=${this.staff.organ_id}`)
+        .get(`${this.$api.get_projet_list}?organ_id=${this.staff.organ_id}&type=my_projects`)
         .then(res => {
           this.$checkResData(res);
-          console.log(res);
           this.projects = res.data.projects.slice(0);
+
+          //重新封装数据，便于组件循环渲染
+          this.projects.forEach(project=>{
+            project.isHasFlow = project.attached_flow.id ? true : false;
+          })
+          console.log(this.projects);
         });
     }
   },
