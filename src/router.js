@@ -6,8 +6,10 @@ import ProjectIndex from '@/views/project/Index'; //项目管理
 import ManageIndex from '@/views/manage/Index'; //系统管理
 
 //二级路由
+import AllProject from '@/views/project/AllProject'; //项目总览
 import Myproject from '@/views/project/Myproject'; //我的项目
-import ManageProject from '@/views/project/ManageProject'; //我的项目
+import ManageProject from '@/views/project/ManageProject'; //项目管理列表
+import EditProject from '@/views/project/EditProject'; //项目管理列表
 import AssignedProject from '@/views/project/AssignedProject'; //项目分配
 import EditFlow from '@/views/project/EditFlow'; //项目流程编辑
 import ManageRole from '@/views/manage/Role'; //角色管理
@@ -39,6 +41,11 @@ export const router = new VueRouter({
       redirect: "/project/my-project",
       children:[
         {
+          path:"/project/all-project",
+          component: AllProject,
+          name: "allProjectLink"
+        },
+        {
           path:"/project/my-project",
           component: Myproject,
           name: "myProjectLink"
@@ -47,6 +54,11 @@ export const router = new VueRouter({
           path:"/project/manage-project",
           component: ManageProject,
           name: "manageProjectLink"
+        },
+        {
+          path:"/project/edit-project",
+          component: EditProject,
+          name: "editProjectLink"
         },
         {
           path:"/project/create",

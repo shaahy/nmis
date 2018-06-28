@@ -32,7 +32,11 @@ export default {
         //分配项目
         dispatch_project_plan: project_id => `${API_ROOT}/projects/${project_id}/dispatch`,
         //创建项目流程
-        create_project_flow: `${API_ROOT}/projects/flows/create`
+        create_project_flow: `${API_ROOT}/projects/flows/create`,
+        //更改项目里程碑状态
+        change_project_milestone: project_id => `${API_ROOT}/projects/${project_id}/change-milestone`,
+        //获取指定项目详情
+        get_project_detail: project_id => `${API_ROOT}/projects/${project_id}`
 
           
     }

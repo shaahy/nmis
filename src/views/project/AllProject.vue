@@ -1,6 +1,6 @@
 <template>
-  <div class="my-project">
-    <app-tag title="我的申请"></app-tag>
+  <div class="all-project">
+    <app-tag title="项目总览"></app-tag>
     <el-row class="row2">
       <div class="search">
         <el-input placeholder="请输入内容" v-model="form.keyWord">
@@ -46,7 +46,7 @@
 <script>
 import AppTag from "@/components/AppTag";
 export default {
-  name: "my-project",
+  name: "all-project",
   props: ["text"],
   data() {
     return {
@@ -119,7 +119,7 @@ export default {
     //获取所有项目
     getProjects() {
       this.$axios
-        .get(`${this.$api.get_projet_list}?organ_id=${this.staff.organ_id}&type=apply&creator_id=${this.staff.id}`)
+        .get(`${this.$api.get_projet_list}?organ_id=${this.staff.organ_id}&type=my_projects`)
         .then(res => {
           this.$checkResData(res);
           this.projects = res.data.projects.slice(0);
@@ -133,7 +133,7 @@ export default {
         .catch(err=>{
           this.$message.error('操作失败');
           console.log(err);
-        })
+        })        
     }
   },
   created() {
@@ -239,6 +239,9 @@ export default {
     overflow: hidden;
     background-color: #fff;
     float: right;
+    .flow {
+
+    }
   }
 }
 @media screen and (max-width:1366px){/* 手机 */
