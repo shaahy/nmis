@@ -40,6 +40,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 * package-lock.json: 当 node_modules 或 package.json 发生变化时自动生成的文件。这个文件主要功能是确定当前安装的包的依赖，以便后续重新安装的时候生成相同的依赖，而忽略项目开发过程中有些依赖已经发生的更新；
 * package.json: 指定项目开发和生成环境中需要使用的依赖库；
 * README.md: 相当于是一个备注文件，对项目开发过程中需要注意的地方进行一些说明。
+* deploy.sh 自动化部署脚本
 
 src 文件夹结构
 * assets: 放置静态资源，包括公共的 css 文件、 js 文件、iconfont 字体文件、img 图片文件 以及其他资源类文件。之所以强调是公共的 css 文件，是因为要在组件的 css 标签里加入 ‘scoped‘ 标记，将其作用范围限制在此组件以及调用它的父级组件中，避免污染全局样式；
