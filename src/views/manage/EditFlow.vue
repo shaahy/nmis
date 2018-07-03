@@ -1,6 +1,6 @@
 <template>
 <div class="edit-flow">
-  <app-tag title="我的项目"></app-tag>
+  <app-tag title="项目流程管理"></app-tag>
   <div class="create">
     <div class="row1">
       <el-input v-model="addData.flowName" placeholder="请输入流程名称" class="flow-name">

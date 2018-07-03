@@ -17,12 +17,14 @@ export const http = axios.create({
 //验证http返回数据
 export const checkResData = function(res){
   if(res.data.code !== 10000){
-    let errMessage = "";
-    for (const key in res.data.errors) {
-      errMessage += res.data.errors[key]
+    let errMessage = ''; 
+    if('errors' in res.data){
+      for (const key in res.data.errors) {
+        errMessage += res.data.errors[key]
+      }      
+    }else{
+      errMessage = res.data.msg;
     }
-    errMessage += res.data.msg;
-    //console.log(res);
     console.log(errMessage);
     throw errMessage
   }

@@ -108,7 +108,7 @@ header{
       }
       #project{
         i{
-          background-image: url("../assets/img/header_ico.png");
+          background-image: url("../assets/img/header-ico.png");
           background-position: 0px 20px;
         }
         &:hover, &.act{
@@ -119,7 +119,7 @@ header{
       }
       #dev{
         i{
-          background-image: url("../assets/img/header_ico.png");
+          background-image: url("../assets/img/header-ico.png");
           background-position: 60px 20px;
         }
         &:hover, &.act{
@@ -130,7 +130,7 @@ header{
       }
       #repos{
         i{
-          background-image: url("../assets/img/header_ico.png");
+          background-image: url("../assets/img/header-ico.png");
           background-position: 40px 20px;
         }
         &:hover, &.act{
@@ -141,7 +141,7 @@ header{
       }
       #manage{
         i{
-          background-image: url("../assets/img/header_ico.png");
+          background-image: url("../assets/img/header-ico.png");
           background-position: 20px 20px;
         }
         &:hover, &.act{

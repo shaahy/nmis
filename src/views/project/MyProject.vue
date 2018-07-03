@@ -16,14 +16,15 @@
       <el-button type="primary" @click="createProject">+ 新建项目</el-button>
     </el-row>
     <el-row class="row3">
-      <div v-for="project in projects" :key='project.id' class="item clearfix">
+      <div v-for="project in projects" :key='project.id' class="item clearfix"   @click="handle(project)">
         <div class="left">
-          <div class="portrait">{{ project.title.slice(0,1) }}</div>
+          <div class="portrait" :class="{gray : !project.isHasFlow}">{{ project.title.slice(0,1) }}</div>
           <div class="info">
             <h2 class="project-name"> {{project.title}} </h2>
             <p class="applicant">负责人：<strong> {{ project.performer_name}} </strong></p>
             <p class="date">{{project.created_time | format-date}} 至 {{project.expired_time | format-date}} </p>
           </div>
+          <span class="line"></span>
         </div>
         <div class="right">
           <div class="flow">
@@ -79,6 +80,11 @@ export default {
     "app-tag": AppTag
   },
   methods: {
+    handle(project){
+      //将当前需要操作的项目保存至状态管理器中
+      this.$store.commit('project/setProjectData', project); 
+      this.$router.push({name: 'projectDetailLink'});      
+    },
     //创建项目
     createProject() {
       this.$router.push("/project/create");
@@ -181,6 +187,8 @@ export default {
   padding-right: 0;
   .item {
     margin-top: 10px;
+    transition: .3s;
+    cursor: pointer;
   }
   .left {
     height: 115px;
@@ -189,6 +197,15 @@ export default {
     padding: 0 10px;
     position: relative;
     background-color: #fff;
+    span.line{
+      height: 0;
+      width:5px;
+      position: absolute;
+      background-color: #4cbdb4;
+      left: 0;
+      top:50%;
+      transition: 0.4s;
+    }
     .portrait {
       width: 50px;
       height: 50px;
@@ -204,6 +221,10 @@ export default {
       float:left;
       margin-top: 32px;
     }
+    .gray{
+      background-color: #eee;
+      color:#999;
+    }    
     .info{
       width:calc(100% - 90px);
       display: block;
@@ -239,6 +260,17 @@ export default {
     overflow: hidden;
     background-color: #fff;
     float: right;
+  }
+
+  .item:hover{
+    box-shadow: 0px 0px 8px #4cbdb4;
+    span.line{
+      top:0;
+      height: 115px;
+    }
+    .project-name{
+      color: $second-color;
+    }    
   }
 }
 @media screen and (max-width:1366px){/* 手机 */

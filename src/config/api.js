@@ -36,7 +36,9 @@ export default {
         //更改项目里程碑状态
         change_project_milestone: project_id => `${API_ROOT}/projects/${project_id}/change-milestone`,
         //获取指定项目详情
-        get_project_detail: project_id => `${API_ROOT}/projects/${project_id}`
+        get_project_detail: project_id => `${API_ROOT}/projects/${project_id}`,
+        //批量导入员工
+        batch_upload_staffs: hid => `${API_ROOT}/hospitals/${hid}/staffs/batch-upload`
 
           
     }

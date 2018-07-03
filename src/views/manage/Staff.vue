@@ -5,7 +5,7 @@
       <div class="header">
         <span class="title"><i></i> 数据列表</span>
         <el-button type="primary" @click="handleAdd">+ 添加员工</el-button>
-        <el-button type="primary">导入</el-button>
+        <el-button type="primary" @click="handleImport">批量导入</el-button>
         <el-button type="primary" @click="handlePermission">分配角色</el-button>
       </div>
       <div class="list">
@@ -116,6 +116,20 @@
       </div>
     </el-dialog>  
 
+
+    <!-- 批量导入员工窗体 -->
+    <el-dialog title="批量导入" :visible.sync="importVisible" width="600px">
+      <input 
+        class = "file" 
+        name = "file" 
+        type = "file"
+        ref = "file"/>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="confirmImport('file')">导 入</el-button>
+        <el-button @click="cancelImport('file')" type="info">取 消</el-button>
+      </div>
+    </el-dialog>  
+
   </div>
 </template>
 
@@ -146,9 +160,10 @@ export default {
         "is_admin": true  #是否为医疗机构管理员	 
       }]     
      */
-      addVisible: false,
-      editVisible: false,
-      permVisible: false,
+      addVisible: false, //添加员工显隐
+      editVisible: false, //编辑员工显隐
+      permVisible: false, //权限分配显隐
+      importVisible:false, //批量导入显隐
       depts: [], //部门列表
       perms:[], //角色列表
       editData: {},
@@ -392,6 +407,41 @@ export default {
       this.selection = selection;
     },
 
+    /* 批量导入 */
+    handleImport(){
+      this.importVisible = true;
+    },
+    cancelImport(file){
+      this.importVisible = false;
+      this.$refs.file.value = '';
+    },
+    confirmImport(file){
+      //console.log(this.$refs.file.files[0]);
+        let param = new FormData(); //创建form对象
+        param.append('staff_excel_file',this.$refs.file.files[0]);//通过append向form对象添加数据
+        let config = { //配置请求头 
+          headers:{'Content-Type':'multipart/form-data'}
+        };
+        this.$axios
+          .post(
+            `${this.$api.batch_upload_staffs(this.$store.getters["user/getStaff"].organ_id)}`,
+            param,
+            config    
+          )
+          .then(res=>{
+            console.log(res);
+            this.$checkResData(res);
+            this.$message({ type: "success", message: "操作成功" });
+            this.importVisible = false;
+            this.getStaffList();
+            this.$refs.file.value = '';
+          })   
+          .catch(err=>{
+            this.$message.error(err);
+            console.log(err);
+          })   
+    },
+    
     /**从后端API获取数据 */
     //从后端获取员工信息
     getStaffList() {

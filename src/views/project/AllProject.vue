@@ -13,7 +13,6 @@
         <li>进行中（）</li>
         <li>已完成（）</li>
       </ul>
-      <el-button type="primary" @click="createProject">+ 新建项目</el-button>
     </el-row>
     <el-row class="row3">
       <div v-for="project in projects" :key='project.id' class="item clearfix">
@@ -79,10 +78,6 @@ export default {
     "app-tag": AppTag
   },
   methods: {
-    //创建项目
-    createProject() {
-      this.$router.push("/project/create");
-    },
     //获取项目正在进行的里程碑索引值 
     getActiveMilestones(project){
       if(project.attached_flow.id){
@@ -239,9 +234,6 @@ export default {
     overflow: hidden;
     background-color: #fff;
     float: right;
-    .flow {
-
-    }
   }
 }
 @media screen and (max-width:1366px){/* 手机 */

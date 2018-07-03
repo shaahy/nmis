@@ -1,7 +1,6 @@
 <template>
   <div class="edit-project">
     <app-tag title="项目编辑"></app-tag>
-    <el-button @click='handle'>测试</el-button>
     <div class="title">
       <i class="device"></i>&nbsp;
       <span class="text">设备申请明细</span> 
@@ -60,9 +59,6 @@ export default {
     "app-tag": AppTag
   },
   methods: {
-    handle() {
-      this.updateProject()
-    },
     setMilestone(){
       this.$confirm(
           `请确定是否要完结 <strong style="color:#f47475;font-size:14px;">
@@ -140,6 +136,7 @@ export default {
           this.project = res.data.project;
         })
         .catch(err=>{
+          this.$message.error('数据更新失败！');
           console.log(err);
         })
     }

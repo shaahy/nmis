@@ -1,19 +1,21 @@
 <template>
   <div class="">
+    <app-tag title="项目详情"></app-tag>
     <div class="row1 clearfix">
-      <div class="item">申请人：{{ staff.staff_name }}</div>
+      <div class="item">申请人1：{{ staff.staff_name }}</div>
       <div class="item">申请科室：{{ staff.dept_name }}</div>
-      <el-button type="primary" @click='onSubmit'>提交申请</el-button>
+      <el-button type="primary" @click='onSubmit' v-if="isEdit">提 交</el-button>
+      <el-button type="primary" @click='onEdit' v-if="formData.isEditable">修 改</el-button>
     </div>
     <div class="row2">
       <el-form  label-width="80px" :model="formData" class="clearfix">
         <div class="left">
           <div class="b-title">申请基本信息</div>
           <el-form-item label="项目名称" class="name" required>
-            <el-input v-model="formData.projectName"></el-input>
+            <el-input v-model="formData.projectName" :disabled="!isEdit"></el-input>
           </el-form-item>
           <el-form-item label="交办选项" class="type" required>
-            <el-select v-model="formData.projectType" placeholder="请选择">
+            <el-select v-model="formData.projectType" placeholder="请选择" :disabled="!isEdit">
               <el-option label="转交办理" value='1'></el-option>
               <el-option label="自行办理" value='2'></el-option>
             </el-select>
@@ -23,6 +25,7 @@
               type="textarea"  
               v-model="formData.resion"
               rows='7'
+              :disabled="!isEdit"
             >
             </el-input>
           </el-form-item>
@@ -38,15 +41,15 @@
               <span class="useage">用途</span>
             </div>
             <div class="item" v-for="(dev, index) in formData.devList" :key="index">
-              <el-input placeholder="请输入设备名" class="only-bottom-border name" v-model="dev.name"></el-input>
-              <el-input placeholder="请输入设备型号" class="only-bottom-border type"  v-model="dev.type"></el-input>
-              <el-input placeholder="设备数量" class="only-bottom-border num"  v-model="dev.num"></el-input>
-              <el-input placeholder="请输入单位" class="only-bottom-border measure"  v-model="dev.measure"></el-input>
-              <el-input placeholder="请输入预计单价" class="only-bottom-border price"  v-model="dev.price"></el-input>
-              <el-input placeholder="请输入用途" class="only-bottom-border useage"  v-model="dev.useage"></el-input>
+              <el-input placeholder="请输入设备名" class="only-bottom-border name" v-model="dev.name" :disabled="!isEdit"></el-input>
+              <el-input placeholder="请输入设备型号" class="only-bottom-border type"  v-model="dev.type_spec" :disabled="!isEdit"></el-input>
+              <el-input placeholder="设备数量" class="only-bottom-border num"  v-model="dev.num" :disabled="!isEdit"></el-input>
+              <el-input placeholder="请输入单位" class="only-bottom-border measure"  v-model="dev.measure" :disabled="!isEdit"></el-input>
+              <el-input placeholder="请输入预计单价" class="only-bottom-border price"  v-model="dev.planned_price" :disabled="!isEdit"></el-input>
+              <el-input placeholder="请输入用途" class="only-bottom-border useage"  v-model="dev.purpose" :disabled="!isEdit"></el-input>
             </div> 
             <div class="add-btn">
-              <el-button icon="el-icon-plus" plain @click="addDevice">添加设备</el-button>
+              <el-button icon="el-icon-plus" plain @click="addDevice" v-if="isEdit">添加设备</el-button>
             </div>                      
         </div>
       </el-form>    
@@ -61,27 +64,26 @@ export default {
   data () {
     return {
       staff:{},
+      project:{},
       formData:{
         projectName:'',
         projectType:'',
+        isEditable: false, //是否可编辑
         resion:'',
-        devList:[
-          {
-            name:"",
-            type:"",
-            num:null,
-            measure: '',
-            price: null,
-            useage: ''
-          },
-        ]
-      }
+        devList:[]
+      },
+      isEdit:false,
     }
   },
   components:{
     "app-tag": AppTag
   },
   methods:{
+    //点击进入修改状态
+    onEdit(){
+      this.isEdit = true;
+    },
+
     //添加设备
     addDevice(){
       this.formData.devList.push({
@@ -125,10 +127,21 @@ export default {
           this.$message.error('操作失败')
           console.log(err);
         })
+    },
+    //初始化数据 
+    init(){
+      this.staff = this.$store.getters['user/getStaff'];
+      this.project = this.$store.getters["project/getProjectData"];
+      this.formData.projectName = this.project.title;
+      this.formData.projectType = '';
+      this.formData.resion = this.project.purpose;
+      this.formData.devList = this.project.ordered_devices;
+      this.formData.isEditable = !this.project.isHasFlow;
     }
+
   },
   created(){
-    this.staff = this.$store.getters['user/getStaff']
+    this.init();
   }
   
 }

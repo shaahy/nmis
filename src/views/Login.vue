@@ -13,10 +13,10 @@
           v-if="isError">
       </el-alert>        
       <el-input v-model="userName" placeholder="请输入用户名/手机/邮箱/email">
-        <template slot="prepend"><img src="../assets/img/input_user_icon.png" alt=""></template>
+        <template slot="prepend"><img src="../assets/img/input-user-icon.png" alt=""></template>
       </el-input>        
       <el-input v-model="passWord" placeholder="请输入密码" type="password">
-        <template slot="prepend"><img src="../assets/img/input_pwd_icon.png" alt=""></template>
+        <template slot="prepend"><img src="../assets/img/input-pwd-icon.png" alt=""></template>
       </el-input>         
       <el-button type="primary" @click="onSubmit" class="btn-login">登&nbsp;&nbsp;&nbsp;&nbsp;陆</el-button>
       <el-row><a href="#" class="btn-forget">忘记密码？</a></el-row>
@@ -55,7 +55,6 @@ export default {
               for (const key in res.data.errors) {
                 this.errMessage += res.data.errors[key]
               }
-              this.errMessage += res.data.msg;
               throw this.errMessage;
             }else{
               //登陆成功

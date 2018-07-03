@@ -1,6 +1,8 @@
 const state = {
-    //当时操作的项目
-    project:{},
+    
+    project:{},//当前操作的项目
+    notAssignedCount:'', //待分配的项目数量
+
 }
 
 const getters= {
@@ -15,7 +17,7 @@ const mutations= {
     setProjectData(state, project){
         localStorage.setItem('project',JSON.stringify(project));
         state.project = project;
-    }
+    },
 }
 const actions= {
 

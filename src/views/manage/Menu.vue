@@ -3,6 +3,7 @@
     <router-link to="/manage/role" exact>角色管理</router-link>
     <router-link to="/manage/staff" exact>人员管理</router-link>
     <router-link to="/manage/department" exact>部门管理</router-link>
+    <router-link to="/manage/edit-flow" exact>项目流程管理</router-link>
   </div>
 </template>
 

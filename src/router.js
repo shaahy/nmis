@@ -7,11 +7,14 @@ import ManageIndex from '@/views/manage/Index'; //系统管理
 
 //二级路由
 import AllProject from '@/views/project/AllProject'; //项目总览
-import Myproject from '@/views/project/Myproject'; //我的项目
-import ManageProject from '@/views/project/ManageProject'; //项目管理列表
+import Myproject from '@/views/project/Myproject'; //我申请的项目
+import ManageProject from '@/views/project/ManageProject'; //我负责的项目
 import EditProject from '@/views/project/EditProject'; //项目管理列表
 import AssignedProject from '@/views/project/AssignedProject'; //项目分配
-import EditFlow from '@/views/project/EditFlow'; //项目流程编辑
+import ProjectDetail from '@/views/project/ProjectDetail'; //项目分配
+
+
+import EditFlow from '@/views/manage/EditFlow'; //项目流程管理
 import ManageRole from '@/views/manage/Role'; //角色管理
 import ManageStaff from '@/views/manage/Staff'; //人员管理
 import ManageDepartment from '@/views/manage/DepartMent'; //部门管理
@@ -89,10 +92,10 @@ export const router = new VueRouter({
           name: "assignedProjectLink"
         },
         {
-          path:"/project/edit-flow",
-          component: EditFlow,
-          name: "editFlowLink"
-        }
+          path:"/project/project-detail",
+          component: ProjectDetail,
+          name: "projectDetailLink"
+        },
       ]
     },    
     {
@@ -115,7 +118,12 @@ export const router = new VueRouter({
           path:"/manage/department",
           component: ManageDepartment,
           name: "manageDepartmentLink"
-        }
+        },
+        {
+          path:"/manage/edit-flow",
+          component: EditFlow,
+          name: "editFlowLink"
+        }        
       ]      
     }
   ],

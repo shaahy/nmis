@@ -162,6 +162,8 @@ export default {
         .then(res => {
           this.$checkResData(res);
           this.projects = res.data.projects.slice(0);
+          //将数据保存至store中
+          this.$store.state.project['notAssignedCount'] = this.projects.length > 0 ? this.projects.length : '';
         })
         .catch(err => {
           console.log(err);
