@@ -22,6 +22,7 @@
       <i class="flow"></i>&nbsp;
       <span class="text">流程管理</span> 
     </div> 
+    <!-- 管理项目 -->
     <div class="row2">
       <div class="info">
         <span class="project-name">{{ project.title }}</span>
@@ -39,8 +40,52 @@
           >
           </el-step>
         </el-steps> 
-        <el-button type="primary" class="setMilestone" @click="setMilestone">完结当前里程碑</el-button>
+        <el-button type="primary" class="btn" @click="setMilestone">完结当前里程碑</el-button>
       </div>
+    </div>       
+    <!-- 启动项目 -->
+    <div class="row2">
+      <el-form>
+        <div class="info">         
+          <span class="project-name">{{ project.title }}</span>
+          <el-form-item label="协助人员" label-width='80px'>
+            <el-input auto-complete="off" v-model="project.assistant" class="wd200"></el-input>
+          </el-form-item>
+          <el-form-item  label="开始时间" label-width='80px'>
+            <el-date-picker
+              v-model="project.startup_time"
+              type="date"
+              placeholder="选择日期">
+            </el-date-picker>         
+          </el-form-item>   
+          <el-form-item  label="截止时间" label-width='80px'>
+            <el-date-picker
+              v-model="project.expired_time"
+              type="date"
+              placeholder="选择日期">
+            </el-date-picker>         
+          </el-form-item>   
+          <el-button type="primary" class="btn" @click="setMilestone">启动项目</el-button>
+        </div>
+        <div class="flow">
+          <el-form-item label="项目流程选择" width='120px' class="flow-select">
+            <el-select v-model="project.flow_id" placeholder="请选择项目流程" class="wd200">
+              <el-option v-for="flow in hospitalData.flows" :key="flow.id" :label="flow.title" :value="flow.id"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-steps :active="getActiveMilestones()" finish-status="success" align-center space='150px' class="flow-steps">
+            <el-step 
+              v-for="milestone in project.attached_flow.milestones"
+              :key="milestone.id" 
+              :title="milestone.title" 
+              :description="getStepDate(milestone.id) | format-date"
+            >
+            </el-step>
+          </el-steps> 
+          
+        </div>
+      </el-form>
+
     </div>       
   </div>
 </template>
@@ -52,7 +97,8 @@ export default {
   data() {
     return {
       staff: {},
-      project: {}
+      project: {},
+      hospitalData:{},
     };
   },
   components: {
@@ -139,12 +185,29 @@ export default {
           this.$message.error('数据更新失败！');
           console.log(err);
         })
-    }
+    },
+
+    //获取医院全局数据（流程种类、部门各类） 
+    getHospitalData(){
+      this.$axios
+        .get(this.$api.hospital_global_data(this.staff.organ_id))
+        .then(res=>{
+          this.hospitalData = res.data;
+        })
+        .catch(err=>{
+          console.log(err);
+        })
+    },
+    init(){
+      this.staff = this.$store.getters["user/getStaff"];
+      this.project = this.$store.getters["project/getProjectData"];
+      this.getHospitalData();
+    } 
+
 
   },
   created() {
-    this.staff = this.$store.getters["user/getStaff"];
-    this.project = this.$store.getters["project/getProjectData"];
+    this.init();
   }  
 };
 </script>
@@ -180,8 +243,10 @@ export default {
 }
 .row2 {
   .info {
+    position: relative;
     background-color: #fff;
     padding: 20px 30px 20px 30px;
+
     span {
       display: inline-block;
       color: #666;
@@ -195,18 +260,33 @@ export default {
   .flow {
     margin-top: 16px;
     position: relative;
+
     padding: 30px;
     background-color: #fff;
     .el-steps {
       width: calc(100% - 250px);
     }
-    .setMilestone {
-      position: absolute;
+
+  }
+  .el-form-item {
+    display: inline-block;
+    margin-bottom: 0;
+    &.flow-select{
       display: block;
-      right: 20px;
-      top: 35%;
+      margin-bottom: 30px;
     }
   }
+  .btn {
+    position: absolute;
+    display: block;
+    right: 20px;
+    top: 35%;
+  }  
+}
+.wd200 { width:200px;}
+.flow-steps{
+  padding:40px 10px;
+  border: 1px dashed $main-color;
 }
 </style>
 
