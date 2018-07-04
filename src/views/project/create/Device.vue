@@ -44,6 +44,7 @@
               <el-input placeholder="请输入单位" class="only-bottom-border measure"  v-model="dev.measure"></el-input>
               <el-input placeholder="请输入预计单价" class="only-bottom-border price"  v-model="dev.price"></el-input>
               <el-input placeholder="请输入用途" class="only-bottom-border useage"  v-model="dev.useage"></el-input>
+              <span class="delete-device" @click="onDelete(dev)"><i class="el-icon-close"></i></span>
             </div> 
             <div class="add-btn">
               <el-button icon="el-icon-plus" plain @click="addDevice">添加设备</el-button>
@@ -93,6 +94,21 @@ export default {
         useage: ''
       })
     },
+    //删除设备
+    onDelete(dev){
+      this.$confirm('此操作将删除设备  <strong style="color:#f47475;font-size:14px;">'+dev.name+'</strong> , 是否继续?', '提示', {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        dangerouslyUseHTMLString: true,
+        type: "warning"
+      }).then(() => {
+        let index = this.formData.devList.indexOf(dev);
+        this.formData.devList.splice(index, 1);       
+        this.$message({ type: 'success', message: '删除成功!' });
+      }).catch(() => {
+        this.$message({ type: 'info',message: '已取消删除'});          
+      });      
+    },
     //提交项目申请
     onSubmit(){
       //转换需要提交的数据格式
@@ -105,7 +121,8 @@ export default {
         dev.measure = this.formData.devList[key].measure;
         dev.purpose = this.formData.devList[key].useage;
         dev.planned_price = parseFloat(this.formData.devList[key].price);
-        devs.push(dev)
+        devs.push(dev);
+        dev = {};
       }
       this.$axios.post(this.$api.create_project_plan,{
         organ_id: this.staff.organ_id,
@@ -203,7 +220,23 @@ export default {
       .num {width:70%;}
       .measure{ width:60% }
       .price{ width:80%; }
-      .useage { width:180%;}
+      .useage { width:155%;}
+      .delete-device { 
+        width: 15%; 
+        text-align: 
+        center; font-size: 
+        24px; 
+        line-height: 46px;
+        cursor: pointer;
+        i{
+          transition: 0.5s;
+          color:#333;
+          &:hover{
+            color:#f56c6c;
+            transform: rotate(180deg);
+          }
+        }
+      }  
     }
     .add-btn{
       text-align: center;
@@ -225,14 +258,5 @@ export default {
     width:100%;
   }
 }
-</style>
-<style lang="scss">
-  .only-bottom-border{
-    input{
-      border:none;
-      border-bottom: 1px solid #aaa;
-      border-radius: 0;
-    }
-  }
 </style>
 

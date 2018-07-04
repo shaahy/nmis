@@ -103,6 +103,14 @@ export const router = new VueRouter({
       component: ManageIndex,
       name: "manageIndexLink",
       redirect: "/manage/role",
+      beforeEnter: (to, from, next) => {
+        if(localStorage.getItem('isAdmin') === 'true'){
+          next();
+        }else{
+          alert('无权限操作！！')
+          next('/')
+        }
+      },      
       children:[
         {
           path:"/manage/role",

@@ -59,4 +59,14 @@ body { overflow-x: hidden;}
   margin-left:$sidebar-width;
 }
 
+//input输入框公有下划线，文字居中（用于项目中的设备列表）
+.only-bottom-border{
+  input{
+    border:none;
+    border-bottom: 1px solid #aaa;
+    border-radius: 0;
+    text-align: center;
+  }
+}
+
 /* 全局样式结束 */

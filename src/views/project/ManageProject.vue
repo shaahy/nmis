@@ -1,7 +1,12 @@
 <template>
   <div class="manage-project">
-    <app-tag title="项目管理"></app-tag>
-    <el-row class="row1">       
+    <app-tag title="我负责的项目"></app-tag>
+    <el-row class="row1">  
+      <div class="search">
+        <el-input placeholder="请输入内容" v-model="screeningData.keyWord">
+          <el-button slot="append" icon="el-icon-search"></el-button>        
+        </el-input> 
+      </div>             
       <ul>
         <li class="act">项目总数（{{this.projects.length}}）</li>
         <li>待启动（）</li>
@@ -11,12 +16,7 @@
     </el-row>    
     <div class="row2">
       <div class="header">
-        <span class="title"><i></i> 数据列表</span>
-        <div class="search">
-          <el-input placeholder="请输入内容" v-model="screeningData.keyWord">
-            <el-button slot="append" icon="el-icon-search"></el-button>        
-          </el-input> 
-        </div>         
+        <span class="title"><i></i> 数据列表</span>       
       </div> 
       <div class="list">
         <el-table 
@@ -140,12 +140,7 @@ export default {
         position: relative;
         top: 3px;
       }
-    }
-    .search {
-      width: 300px;
-      display: inline-block;
-      margin-left:5%;
-    }      
+    }    
   }  
   .list {
     background-color: #fff;
@@ -153,4 +148,9 @@ export default {
     margin-top: 2px;
   }
 }
+.search {
+  width: 300px;
+  display: inline-block;
+  padding-right: 20px;
+}  
 </style>

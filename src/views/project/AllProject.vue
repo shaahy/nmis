@@ -134,6 +134,18 @@ export default {
   created() {
     this.staff = this.$store.getters["user/getStaff"];
     this.getProjects();
+  },
+  //组件内路由守卫 
+  beforeRouteEnter (to, from, next) {
+      next(vm => {
+        if(vm.staff.is_admin){
+          next();
+        }
+        else{
+          vm.$message.error('无权限操作，请用管理员/分配者账号登陆');
+          next('/');
+        }
+      });
   }
 };
 </script>

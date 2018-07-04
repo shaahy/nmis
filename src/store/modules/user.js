@@ -1,4 +1,5 @@
 import cookies from 'vue-cookies'      						 //引入cookie模块
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
 const state = {
 	//员工属性
 	staff:{
@@ -48,7 +49,20 @@ const mutations= {
 		//保存token
 		//cookies.set("Authorization","Token "+ data.authtoken)
 		localStorage.setItem('Authorization',"Token "+ data.authtoken)
-		localStorage.setItem('isLogin','true') //只能存储字符串
+		//只能存储字符串
+		localStorage.setItem('isLogin','true') //登陆状态
+		//是否为管理员
+		if(data.staff.is_admin){ 
+			localStorage.setItem('isAdmin', 'true');
+		}else{
+			localStorage.setItem('isAdmin', 'false');
+		}
+		//是否为分配者
+		if(data.staff.group_cate === "GPA" || data.staff.is_admin){
+			localStorage.setItem('isAssigner', 'true');
+		}else{
+			localStorage.setItem('isAssigner', 'false');
+		}
 	}
 
 }

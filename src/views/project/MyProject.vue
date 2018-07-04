@@ -1,6 +1,6 @@
 <template>
   <div class="my-project">
-    <app-tag title="我的申请"></app-tag>
+    <app-tag title="我申请的项目"></app-tag>
     <el-row class="row2">
       <div class="search">
         <el-input placeholder="请输入内容" v-model="form.keyWord">

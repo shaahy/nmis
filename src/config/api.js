@@ -38,7 +38,9 @@ export default {
         //获取指定项目详情
         get_project_detail: project_id => `${API_ROOT}/projects/${project_id}`,
         //批量导入员工
-        batch_upload_staffs: hid => `${API_ROOT}/hospitals/${hid}/staffs/batch-upload`
+        batch_upload_staffs: hid => `${API_ROOT}/hospitals/${hid}/staffs/batch-upload`,
+        //为项目删除单个设备
+        delete_device_for_project: (project_id, device_id) => `${API_ROOT}/projects/${project_id}/devices/${device_id}`
 
           
     }

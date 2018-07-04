@@ -12,7 +12,7 @@
         <li id="repos" :class="{act: isActive.repos}">
           <router-link to="" exact><i></i> 态势报表</router-link>
         </li>
-        <li id="manage" :class="{act: isActive.manage}">
+        <li id="manage" :class="{act: isActive.manage}" v-if="staff.is_admin">
           <router-link to="/manage" exact><i></i> 系统管理</router-link>
         </li>
       </ul>
@@ -33,21 +33,26 @@ export default {
   data () {
     return {
       staff:{},
-      isActive:{}
+      isActive:{},
     }
   },
   methods:{
     quit(){  
       localStorage.removeItem('Authorization')  //清除Token            
+      localStorage.removeItem('isAdmin')                 
+      localStorage.removeItem('isAssigner')             
       localStorage.setItem('isLogin', 'false')  //设置登陆状态为false
       this.$router.push({name:'loginLink'})     //导航至登陆页
+    },
+    init(){
+      //获取用户信息
+      this.staff = this.$store.getters['user/getStaff']
+      //获取导航状态
+      this.isActive = this.$store.getters['nav/getNavStatus']
     }
   },
   created(){
-    //获取用户信息
-    this.staff = this.$store.getters['user/getStaff']
-    //获取导航状态
-    this.isActive = this.$store.getters['nav/getNavStatus']
+    this.init();
   }  
 }
 </script>

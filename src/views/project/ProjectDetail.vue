@@ -4,8 +4,8 @@
     <div class="row1 clearfix">
       <div class="item">申请人1：{{ staff.staff_name }}</div>
       <div class="item">申请科室：{{ staff.dept_name }}</div>
-      <el-button type="primary" @click='onSubmit' v-if="isEdit">提 交</el-button>
-      <el-button type="primary" @click='onEdit' v-if="formData.isEditable">修 改</el-button>
+      <el-button type="primary" @click='onSubmit' v-if="isEdit">保 存</el-button>
+      <el-button type="danger" @click='onEdit' v-if="!isEdit && formData.isEditable">修 改</el-button>
     </div>
     <div class="row2">
       <el-form  label-width="80px" :model="formData" class="clearfix">
@@ -47,9 +47,10 @@
               <el-input placeholder="请输入单位" class="only-bottom-border measure"  v-model="dev.measure" :disabled="!isEdit"></el-input>
               <el-input placeholder="请输入预计单价" class="only-bottom-border price"  v-model="dev.planned_price" :disabled="!isEdit"></el-input>
               <el-input placeholder="请输入用途" class="only-bottom-border useage"  v-model="dev.purpose" :disabled="!isEdit"></el-input>
+              <span class="delete-device" @click="onDelete(dev)" v-if="isEdit"><i class="el-icon-close"></i></span>
             </div> 
-            <div class="add-btn">
-              <el-button icon="el-icon-plus" plain @click="addDevice" v-if="isEdit">添加设备</el-button>
+            <div class="add-btn"  v-if="isEdit">
+              <el-button icon="el-icon-plus" plain @click="addDevice">添加设备</el-button>
             </div>                      
         </div>
       </el-form>    
@@ -95,7 +96,33 @@ export default {
         useage: ''
       })
     },
-    //提交项目申请
+    //删除设备
+    onDelete(dev){
+      console.log(this.project);
+      this.$confirm('此操作将删除设备  <strong style="color:#f47475;font-size:14px;">'+dev.name+'</strong> , 是否继续?', '提示', {
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
+        dangerouslyUseHTMLString: true,
+        type: "warning"
+      }).then(() => {
+        this.$axios
+          .delete(this.$api.delete_device_for_project(this.project.id, dev.id))
+          .then(res=>{
+            this.$checkResData(res);
+            let index = this.project.ordered_devices.indexOf(dev);
+            this.project.ordered_devices.splice(index, 1);
+            this.$message({ type: "success", message: "操作成功" });
+          })
+          .catch(err=>{
+            this.$message.error('操作失败');
+            console.log(err);
+          })
+        this.$message({ type: 'success', message: '删除成功!' });
+      }).catch(() => {
+        this.$message({ type: 'info',message: '已取消删除'});          
+      });      
+    },
+    //提交项目修改
     onSubmit(){
       //转换需要提交的数据格式
       var devs = []
@@ -200,7 +227,8 @@ export default {
       .num {width:70%;}
       .measure{ width:60% }
       .price{ width:80%; }
-      .useage { width:180%;}      
+      .useage { width:160%;}
+          
     }
     .item{
       display: flex;
@@ -216,7 +244,23 @@ export default {
       .num {width:70%;}
       .measure{ width:60% }
       .price{ width:80%; }
-      .useage { width:180%;}
+      .useage { width:155%;}
+      .delete-device { 
+        width: 15%; 
+        text-align: 
+        center; font-size: 
+        24px; 
+        line-height: 46px;
+        cursor: pointer;
+        i{
+          transition: 0.5s;
+          color:#333;
+          &:hover{
+            color:#f56c6c;
+            transform: rotate(180deg);
+          }
+        }
+      }  
     }
     .add-btn{
       text-align: center;
@@ -238,14 +282,5 @@ export default {
     width:100%;
   }
 }
-</style>
-<style lang="scss">
-  .only-bottom-border{
-    input{
-      border:none;
-      border-bottom: 1px solid #aaa;
-      border-radius: 0;
-    }
-  }
 </style>
 

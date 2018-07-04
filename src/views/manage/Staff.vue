@@ -469,6 +469,8 @@ export default {
       this.$axios.get(this.$api.get_group_list(this.$store.getters['user/getStaff'].organ_id))
         .then(res => {
           this.perms  = res.data.group.slice(0);
+          console.log(res);
+          console.log(this.perms);
         })
         .catch(err=>{
           console.log(err);
