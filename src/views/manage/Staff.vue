@@ -18,9 +18,10 @@
           <el-table-column prop="contact_phone" label="手机号" width="150"></el-table-column>
           <el-table-column prop="group_name" label="角色" width="150"></el-table-column>
           <el-table-column prop="dept_name" label="所属部门"></el-table-column>
-          <el-table-column label="操作" width="300" align="center">
+          <el-table-column label="操作" width="200" align="center">
           <template slot-scope="scope">
             <el-button
+              v-if="false"
               size="mini"
               round
               icon="el-icon-view"        
@@ -90,7 +91,12 @@
           <el-select v-model="editData.dept_id" placeholder="请选择所属于部门">
             <el-option v-for="dept in depts" :key="dept.id" :label="dept.name" :value="dept.id"></el-option>
           </el-select>
-        </el-form-item>          
+        </el-form-item> 
+        <el-form-item label="角色选择" label-width='80px'>
+          <el-select v-model="permData.selectedRole" placeholder="请选择角色"  @change="setRole">
+            <el-option v-for="perm in perms" :key="perm.id" :label="perm.name" :value="perm.id"></el-option>
+          </el-select>
+        </el-form-item>                  
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmEdit('editForm')">确 定</el-button>
@@ -169,7 +175,7 @@ export default {
       editData: {},
       addData: {},
       permData: {
-        selectedRole: "" //角色分配
+        selectedRole: "", //角色分配
       },
       rules: {
         email: [
@@ -286,6 +292,8 @@ export default {
     handleEdit(index, row) {
       this.editData = JSON.parse(JSON.stringify(row)); //复制对象，需JSON这序列化，否则会赋值引用
       this.editVisible = true;
+      this.permData.selectedRole = row.group_id;
+      console.log(this.editData.id);
     },
     cancelEdit(editForm) {
       this.editData = {};
@@ -298,6 +306,7 @@ export default {
       this.editVisible = false;
     },
     confirmEdit(editForm) {
+      //编辑常规信息
       this.$refs[editForm].validate(valid => {
         if (valid) {
           this.$axios.put(this.$api.update_staff(this.$store.getters["user/getStaff"].organ_id,this.editData.id),{
@@ -308,13 +317,13 @@ export default {
             email: this.editData.email
             })
             .then(res => {
-              console.log(res);
               this.$checkResData(res); //先检查返回数据，若有错误则会抛出错误信息，此函数封闭在http/index.js中
-              this.editVisible = false;
-              this.$message({ type: "success", message: "员工修改成功!" });
               this.getStaffList();
               this.editVisible = false;
+              this.$message({ type: "success", message: "员工修改成功!" });                
               this.editData = {};
+              this.permData.selectedRole = '';              
+              
             })
             .catch(err => {
               this.$message.error(err);
@@ -325,6 +334,25 @@ export default {
           return false;
         }
       });
+
+    },
+    //修改单个员工权限
+    setRole(value){
+      console.log(this.editData.id);
+      //角色编辑
+      this.$axios.put(this.$api.change_staffs_permission(this.$store.getters["user/getStaff"].organ_id), {
+        perm_group_id: this.permData.selectedRole,
+        staffs: this.editData.id + ''
+      })
+        .then(res => {
+          console.log(res);
+          console.log('角色修改成功');
+          this.getStaffList();
+        })
+        .catch(err => {
+          this.$message.error("角色分配失败!");
+          console.log(err);
+        }); 
     },
 
     /* 删除员工 */
@@ -371,6 +399,7 @@ export default {
       }
     },
     confirmPerm(permForm) {
+      
       this.$refs[permForm].validate(valid => {
         if (valid) {
           this.$axios.put(this.$api.change_staffs_permission(this.$store.getters["user/getStaff"].organ_id), {
@@ -470,17 +499,19 @@ export default {
         .then(res => {
           this.perms  = res.data.group.slice(0);
           console.log(res);
-          console.log(this.perms);
         })
         .catch(err=>{
           console.log(err);
         })
+    },
+    init(){
+      this.getStaffList();
+      this.getDepartmentList();
+      this.getPermList()
     }
   },
   created() {
-    this.getStaffList();
-    this.getDepartmentList();
-    this.getPermList()
+    this.init();
   }
 };
 </script>

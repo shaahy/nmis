@@ -3,15 +3,15 @@
     <app-tag title="我负责的项目"></app-tag>
     <el-row class="row1">  
       <div class="search">
-        <el-input placeholder="请输入内容" v-model="screeningData.keyWord">
-          <el-button slot="append" icon="el-icon-search"></el-button>        
+        <el-input placeholder="请输入项目名称/申请人" v-model="formData.keyWord">
+          <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>        
         </el-input> 
       </div>             
       <ul>
-        <li class="act">项目总数（{{this.projects.length}}）</li>
-        <li>待启动（）</li>
-        <li>进行中（）</li>
-        <li>已完成（）</li>
+        <li :class="{ act: formData.control.all  }" @click="handleAll">全部({{ this.formData.count.all }})</li>
+        <li :class="{ act: formData.control.todo  }" @click="handleTodo">待启动({{ this.formData.count.todo }})</li>
+        <li :class="{ act: formData.control.doing  }" @click="handleDoing">进行中({{ this.formData.count.doing }})</li>
+        <li :class="{ act: formData.control.done  }" @click="handleDone">已完成({{ this.formData.count.done }})</li>
       </ul>
     </el-row>    
     <div class="row2">
@@ -61,7 +61,22 @@ export default {
   name: 'manage-project',
   data () {
     return {
-     screeningData:{},
+      formData:{
+        keyWord:'',
+        screening:'',
+        control:{
+          all:true,
+          todo:false,
+          doing:false,
+          done:false
+        },
+        count:{
+          all:0,
+          todo:0,
+          doing:0,
+          done:0,
+        }
+      },
      staff:{},
      projects:[],
     }
@@ -81,17 +96,102 @@ export default {
     //获取所有项目
     getProjects() {
       this.$axios
-        .get(`${this.$api.get_projet_list}?organ_id=${this.staff.organ_id}&type=my_projects`)
+        .get(`${this.$api.get_projet_list}?
+              organ_id=${this.staff.organ_id}&
+              pro_status=${this.formData.screening}&
+              search_key=${this.formData.keyWord}&           
+              type=my_performer`
+              .replace(/ *[\r|\n] */gm, '')
+            )
         .then(res => {
           this.$checkResData(res);
           this.projects = res.data.projects.slice(0);
           //console.log(this.projects);
         });
-    }    
+    },
+    //计算所有状态项目的数量 
+    getProjectAndCount(){
+      this.$axios
+        .get(`${this.$api.get_projet_list}?
+              organ_id=${this.staff.organ_id}&
+              type=my_performer&
+              pro_status=${this.formData.screening}&
+              search_key=${this.formData.keyWord}`
+              .replace(/ *[\r|\n] */gm, '')
+            )
+        .then(res => {
+          this.$checkResData(res);
+          this.projects = res.data.projects.slice(0);
+          let status;
+          for(let key in this.projects){
+            status = this.projects[key].status
+            if(status === 'PE'){
+              this.formData.count.todo += 1;
+            }else if( status === 'SD'){
+              this.formData.count.doing += 1;
+            }else if( status === 'DO' ){
+              this.formData.count.done += 1;
+            }
+          }
+          this.formData.count.all = this.projects.length;
+
+          //重新封装数据，便于组件循环渲染
+          this.projects.forEach(project=>{
+            project.isHasFlow = project.attached_flow.id ? true : false;
+          })
+        })
+        .catch(err=>{
+          this.$message.error('操作失败');
+          console.log(err);
+        })        
+    },
+    //筛选类
+    handleSearch(){
+      this.getProjects();
+      this.formData.control.all =true;
+      this.formData.control.todo =false;
+      this.formData.control.doing =false;
+      this.formData.control.done =false;      
+    },
+    handleAll(){
+      this.formData.control.all =true;
+      this.formData.control.todo =false;
+      this.formData.control.doing =false;
+      this.formData.control.done =false;
+      this.formData.screening = '';
+      this.getProjects()
+    },
+    handleTodo(){
+      this.formData.control.all =false;
+      this.formData.control.todo =true;
+      this.formData.control.doing =false;
+      this.formData.control.done =false;
+      this.formData.screening = 'PE';
+      this.getProjects()
+    },
+    handleDoing(){
+      this.formData.control.all =false;
+      this.formData.control.todo =false;
+      this.formData.control.doing =true;
+      this.formData.control.done =false;
+      this.formData.screening = 'SD';
+      this.getProjects()      
+    },
+    handleDone(){
+      this.formData.control.all =false;
+      this.formData.control.todo =false;
+      this.formData.control.doing =false;
+      this.formData.control.done =true;
+      this.formData.screening = 'DO';
+      this.getProjects()      
+    }, 
+    init(){
+      this.staff = this.$store.getters["user/getStaff"];
+      this.getProjectAndCount();
+    }        
   },
   created(){
-    this.staff = this.$store.getters["user/getStaff"];
-    this.getProjects();
+    this.init();
   }
 
 }

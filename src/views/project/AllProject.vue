@@ -3,15 +3,15 @@
     <app-tag title="项目总览"></app-tag>
     <el-row class="row2">
       <div class="search">
-        <el-input placeholder="请输入内容" v-model="form.keyWord">
-          <el-button slot="append" icon="el-icon-search"></el-button>        
+        <el-input placeholder="请输入项目名称/负责人" v-model="formData.keyWord">
+          <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>        
         </el-input> 
       </div>        
       <ul>
-        <li class="act">项目总数（{{this.projects.length}}）</li>
-        <li>待启动（）</li>
-        <li>进行中（）</li>
-        <li>已完成（）</li>
+        <li :class="{ act: formData.control.all  }" @click="handleAll">全部({{ this.formData.count.all }})</li>
+        <li :class="{ act: formData.control.todo  }" @click="handleTodo">待启动({{ this.formData.count.todo }})</li>
+        <li :class="{ act: formData.control.doing  }" @click="handleDoing">进行中({{ this.formData.count.doing }})</li>
+        <li :class="{ act: formData.control.done  }" @click="handleDone">已完成({{ this.formData.count.done }})</li>
       </ul>
     </el-row>
     <el-row class="row3">
@@ -23,6 +23,7 @@
             <p class="applicant">负责人：<strong> {{ project.performer_name}} </strong></p>
             <p class="date">{{project.created_time | format-date}} 至 {{project.expired_time | format-date}} </p>
           </div>
+          <span class="line"></span>
         </div>
         <div class="right">
           <div class="flow">
@@ -49,29 +50,25 @@ export default {
   props: ["text"],
   data() {
     return {
+      num:0,
       staff: {},
-      form: {
-        region: "",
-        keyWord: ""
+      formData:{
+        keyWord:'',
+        screening:'',
+        control:{
+          all:true,
+          todo:false,
+          doing:false,
+          done:false
+        },
+        count:{
+          all:0,
+          todo:0,
+          doing:0,
+          done:0,
+        }
       },
       projects: []
-      /*    { 项目列表数组中的数据字段格式
-      "id": 7,
-      "title": "设备更新"  #项目主题,
-      "purpose": "老化设备需要更新"  #申请原因,
-      "status": "SD"  #项目状态,
-      "creator_id": 7  #申请人id,
-      "creator_name": "test"  #申请人姓名,
-      "related_dept_id": 20181020  #申请科室id,
-      "related_dept_name": "信息科"  #申请科室名称,
-      "performer_id": 21  #项目负责人id,
-      "performer_name": "测试124"  #项目负责人名称,
-      "current_stone_id": NaN  #里程碑id,
-      "attached_flow": "{}"  #项目流程,
-      "ordered_devices":    
-      "isHasFlow":false; 是否已分配流程
-      }
-*/
     };
   },
   components: {
@@ -81,7 +78,6 @@ export default {
     //获取项目正在进行的里程碑索引值 
     getActiveMilestones(project){
       if(project.attached_flow.id){
-        //console.log('22');
         let milestones =  project.attached_flow.milestones;
         for(let i=0; i < milestones.length; i++){
           if(project.current_stone_id === milestones[i].id){
@@ -111,30 +107,114 @@ export default {
       return "";
 
     },
-    //获取所有项目
+    //获取所有项目(带筛选)
     getProjects() {
       this.$axios
-        .get(`${this.$api.get_projet_list}?organ_id=${this.staff.organ_id}&type=my_projects`)
+        .get(`${this.$api.get_projet_list}?
+              organ_id=${this.staff.organ_id}&
+              type=total_projects&
+              pro_status=${this.formData.screening}&
+              search_key=${this.formData.keyWord}`
+              .replace(/ *[\r|\n] */gm, '')
+            )
         .then(res => {
           this.$checkResData(res);
           this.projects = res.data.projects.slice(0);
-
           //重新封装数据，便于组件循环渲染
           this.projects.forEach(project=>{
             project.isHasFlow = project.attached_flow.id ? true : false;
           })
-          //console.log(this.projects);
         })
         .catch(err=>{
           this.$message.error('操作失败');
           console.log(err);
         })        
-    }
+    },
+    //计算所有状态项目的数量 
+    getProjectAndCount(){
+      this.$axios
+        .get(`${this.$api.get_projet_list}?
+              organ_id=${this.staff.organ_id}&
+              type=total_projects&
+              pro_status=${this.formData.screening}&
+              search_key=${this.formData.keyWord}`
+              .replace(/ *[\r|\n] */gm, '')
+            )
+        .then(res => {
+          this.$checkResData(res);
+          this.projects = res.data.projects.slice(0);
+          let status;
+          for(let key in this.projects){
+            status = this.projects[key].status
+            if(status === 'PE'){
+              this.formData.count.todo += 1;
+            }else if( status === 'SD'){
+              this.formData.count.doing += 1;
+            }else if( status === 'DO' ){
+              this.formData.count.done += 1;
+            }
+          }
+          this.formData.count.all = this.projects.length;
+
+          //重新封装数据，便于组件循环渲染
+          this.projects.forEach(project=>{
+            project.isHasFlow = project.attached_flow.id ? true : false;
+          })
+        })
+        .catch(err=>{
+          this.$message.error('操作失败');
+          console.log(err);
+        })        
+    },
+    //筛选类
+    handleSearch(){
+      this.getProjects();
+      this.formData.control.all =true;
+      this.formData.control.todo =false;
+      this.formData.control.doing =false;
+      this.formData.control.done =false;      
+    },
+    handleAll(){
+      this.formData.control.all =true;
+      this.formData.control.todo =false;
+      this.formData.control.doing =false;
+      this.formData.control.done =false;
+      this.formData.screening = '';
+      this.getProjects()
+    },
+    handleTodo(){
+      this.formData.control.all =false;
+      this.formData.control.todo =true;
+      this.formData.control.doing =false;
+      this.formData.control.done =false;
+      this.formData.screening = 'PE';
+      this.getProjects()
+    },
+    handleDoing(){
+      this.formData.control.all =false;
+      this.formData.control.todo =false;
+      this.formData.control.doing =true;
+      this.formData.control.done =false;
+      this.formData.screening = 'SD';
+      this.getProjects()      
+    },
+    handleDone(){
+      this.formData.control.all =false;
+      this.formData.control.todo =false;
+      this.formData.control.doing =false;
+      this.formData.control.done =true;
+      this.formData.screening = 'DO';
+      this.getProjects()      
+    }, 
+    init(){
+      this.staff = this.$store.getters["user/getStaff"];
+      this.getProjectAndCount();
+    },
   },
   created() {
-    this.staff = this.$store.getters["user/getStaff"];
-    this.getProjects();
+    this.init();  
   },
+
   //组件内路由守卫 
   beforeRouteEnter (to, from, next) {
       next(vm => {
@@ -196,6 +276,15 @@ export default {
     padding: 0 10px;
     position: relative;
     background-color: #fff;
+    span.line{
+      height: 0;
+      width:5px;
+      position: absolute;
+      background-color: #4cbdb4;
+      left: 0;
+      top:50%;
+      transition: 0.4s;
+    }    
     .portrait {
       width: 50px;
       height: 50px;
@@ -247,6 +336,16 @@ export default {
     background-color: #fff;
     float: right;
   }
+  .item:hover{
+    box-shadow: 0px 0px 8px #4cbdb4;
+    span.line{
+      top:0;
+      height: 115px;
+    }
+    .project-name{
+      color: $second-color;
+    }    
+  }  
 }
 @media screen and (max-width:1366px){/* 手机 */
   .row2{

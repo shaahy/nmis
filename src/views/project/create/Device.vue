@@ -14,8 +14,8 @@
           </el-form-item>
           <el-form-item label="交办选项" class="type" required>
             <el-select v-model="formData.projectType" placeholder="请选择">
-              <el-option label="转交办理" value='1'></el-option>
-              <el-option label="自行办理" value='2'></el-option>
+              <el-option label="转交办理" value='AG'></el-option>
+              <el-option label="自行办理" value='SE'></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="申请原因" class="resion">
@@ -127,6 +127,7 @@ export default {
       this.$axios.post(this.$api.create_project_plan,{
         organ_id: this.staff.organ_id,
         project_title: this.formData.projectName,
+        handing_type: this.formData.projectType,
         purpose: this.formData.resion,
         creator_id: this.staff.id,
         related_dept_id: this.staff.dept_id,

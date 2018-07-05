@@ -16,8 +16,8 @@
           </el-form-item>
           <el-form-item label="交办选项" class="type" required>
             <el-select v-model="formData.projectType" placeholder="请选择" :disabled="!isEdit">
-              <el-option label="转交办理" value='1'></el-option>
-              <el-option label="自行办理" value='2'></el-option>
+              <el-option label="转交办理" value='AG'></el-option>
+              <el-option label="自行办理" value='SE'></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="申请原因" class="resion">
@@ -160,7 +160,7 @@ export default {
       this.staff = this.$store.getters['user/getStaff'];
       this.project = this.$store.getters["project/getProjectData"];
       this.formData.projectName = this.project.title;
-      this.formData.projectType = '';
+      this.formData.projectType = this.project.handing_type;
       this.formData.resion = this.project.purpose;
       this.formData.devList = this.project.ordered_devices;
       this.formData.isEditable = !this.project.isHasFlow;

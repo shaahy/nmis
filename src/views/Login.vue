@@ -3,7 +3,7 @@
     <header>
       <div class="clearfix"><img src="../assets/img/logo.png" alt=""><h1>信息服务管理系统</h1></div>
     </header>
-    <form class="login-box">
+    <form class="login-box" @keyup.enter="onSubmit">
       <h2>登陆</h2> 
       <el-alert
           :title="errMessage"
@@ -15,11 +15,11 @@
       <el-input v-model="userName" placeholder="请输入用户名/手机/邮箱/email">
         <template slot="prepend"><img src="../assets/img/input-user-icon.png" alt=""></template>
       </el-input>        
-      <el-input v-model="passWord" placeholder="请输入密码" type="password">
+      <el-input v-model="passWord" placeholder="请输入密码" type="password" >
         <template slot="prepend"><img src="../assets/img/input-pwd-icon.png" alt=""></template>
       </el-input>         
       <el-button type="primary" @click="onSubmit" class="btn-login">登&nbsp;&nbsp;&nbsp;&nbsp;陆</el-button>
-      <el-row><a href="#" class="btn-forget">忘记密码？</a></el-row>
+      <el-row v-if="false"><a href="#" class="btn-forget">忘记密码？</a></el-row>
     </form>
 
   </div>

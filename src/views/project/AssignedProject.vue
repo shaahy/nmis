@@ -47,7 +47,7 @@
             </template>          
           </el-autocomplete>
         </el-form-item> 
-        <el-form-item label="分配流程" label-width='80px' required>
+        <!-- <el-form-item label="分配流程" label-width='80px' required>
           <el-select v-model="assignedData.flow_id" placeholder="请选择项目流程" class="wd65">
             <el-option v-for="flow in hospitalData.flows" :key="flow.id" :label="flow.title" :value="flow.id"></el-option>
           </el-select>
@@ -65,7 +65,7 @@
         </el-form-item>  
         <el-form-item label="协助人员" label-width='80px'>
           <el-input auto-complete="off" v-model="assignedData.assistant" class="wd65"></el-input>
-        </el-form-item>              
+        </el-form-item>               -->
       </el-form>       
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="confirmAssigned('AssignedForm')">确 定</el-button>
@@ -111,15 +111,14 @@ export default {
         if(valid){
           var url = `${this.$api.dispatch_project_plan(this.assignedData.project_id)}`
           this.$axios
-            .post(url, {
+            .put(url, {
               performer_id: this.assignedData.staff.id,
-              flow_id: this.assignedData.flow_id,
-              expired_time: this.assignedData.date[1]+''
             })
             .then(res=>{
               console.log(res);
               this.$checkResData(res);
               this.$message({ type: 'success',  message: '项目分配成功!'});
+              this.$refs[AssignedForm].clearValidate();
               this.assignedData = {};
               this.assignedVisible = false;
               this.getProjects();
