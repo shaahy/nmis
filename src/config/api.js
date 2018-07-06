@@ -19,20 +19,20 @@ export default {
         update_staff: (hid, staff_id) => `${API_ROOT}/hospitals/${hid}/staffs/${staff_id}`,
         //添加员工
         create_staff: hid => `${API_ROOT}/hospitals/${hid}/staffs/create`,
+        //批量导入员工
+        batch_upload_departments: hid => `${API_ROOT}/hospitals/${hid}/departments/batch-upload`,
         //获取权限组列表
         get_group_list: hid => `${API_ROOT}/hospitals/${hid}/groups`,
         //分配权限
         change_staffs_permission: hid => `${API_ROOT}/hospitals/${hid}/staffs/change-permission`, 
-        //创建项目申请    
-        create_project_plan: `${API_ROOT}/projects/create`, 
         //获取我的项目中项目列表，带筛选条件
         get_projet_list:`${API_ROOT}/projects/`,
         //返回医院全局数据
         hospital_global_data: hid => `${API_ROOT}/hospitals/${hid}/global-data`,
-        //分配项目
-        dispatch_project_plan: project_id => `${API_ROOT}/projects/${project_id}/dispatch`,
         //创建项目流程
         create_project_flow: `${API_ROOT}/projects/flows/create`,
+        //删除项目流程
+        delete_project_flow: flow_id => `${API_ROOT}/projects/flows/${flow_id}`,
         //更改项目里程碑状态
         change_project_milestone: project_id => `${API_ROOT}/projects/${project_id}/change-milestone`,
         //获取指定项目详情
@@ -40,7 +40,16 @@ export default {
         //批量导入员工
         batch_upload_staffs: hid => `${API_ROOT}/hospitals/${hid}/staffs/batch-upload`,
         //为项目删除单个设备
-        delete_device_for_project: (project_id, device_id) => `${API_ROOT}/projects/${project_id}/devices/${device_id}`
+        delete_device_for_project: (project_id, device_id) => `${API_ROOT}/projects/${project_id}/devices/${device_id}`,
+
+        //创建项目申请    
+        create_project_plan: `${API_ROOT}/projects/create`,
+        //修改项目申请
+        update_project_plan: project_id => `${API_ROOT}/projects/${project_id}`,
+        //分配项目
+        dispatch_project_plan: project_id => `${API_ROOT}/projects/${project_id}/dispatch`,
+        //启动项目       
+        starup_project_plan: project_id => `${API_ROOT}/projects/${project_id}/startup`
 
           
     }

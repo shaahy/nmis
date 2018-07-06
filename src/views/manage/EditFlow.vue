@@ -23,7 +23,14 @@
       <h2>{{ flow.title }}</h2> 
       <ul class="clearfix">
         <li v-for="step in flow.milestones" :key="step.id">{{ step.title }}<i class="arrow el-icon-arrow-right"></i></li>
-      </ul>     
+      </ul>
+      <el-button
+        type="danger"
+        size="medium"
+        round
+        icon="el-icon-delete"
+        class="delete-btn"              
+        @click="handleDelete(flow.id)">删除</el-button>           
     </div>
   </div>
 </div>
@@ -80,7 +87,42 @@ export default {
           console.log(err);
         })
     },
-
+    //删除流程
+    handleDelete(flow_id){
+      this.$confirm(
+        "当前操作将删除流程 , 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          dangerouslyUseHTMLString: true,
+          type: "warning"
+        }
+      )
+      //点击确定
+      .then(() => {
+        console.log(flow_id);
+        this.$axios
+          .delete(this.$api.delete_project_flow(flow_id))
+          .then(res => {
+            this.getFlowList();
+            this.$checkResData(res);
+            this.$message({ type: "success", message: "流程删除成功!" });
+          })
+          .catch(err => {
+            this.$message({ type: "error", message: err });
+            console.log(err);
+          });
+      })
+      //点击取消
+      .catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消操作"
+        });
+      });       
+    },
+    //获取所有流程列表
     getFlowList(){
       this.$axios
         .get(this.$api.hospital_global_data(this.$store.getters["user/getStaff"].organ_id))
@@ -121,7 +163,9 @@ export default {
   }
 }
 .list{
+  position: relative;
   .item{
+    position: relative;
     background-color: #fff;
     margin-top: 10px;
     padding:20px;
@@ -148,6 +192,11 @@ export default {
       }
       }
     }
+    .delete-btn{
+    position: absolute;
+    right: 20px;
+    top:35%;
+  }
   }
 }
 </style>

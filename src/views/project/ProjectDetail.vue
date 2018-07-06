@@ -2,7 +2,7 @@
   <div class="">
     <app-tag title="项目详情"></app-tag>
     <div class="row1 clearfix">
-      <div class="item">申请人1：{{ staff.staff_name }}</div>
+      <div class="item">申请人：{{ staff.staff_name }}</div>
       <div class="item">申请科室：{{ staff.dept_name }}</div>
       <el-button type="primary" @click='onSubmit' v-if="isEdit">保 存</el-button>
       <el-button type="danger" @click='onEdit' v-if="!isEdit && formData.isEditable">修 改</el-button>
@@ -89,11 +89,11 @@ export default {
     addDevice(){
       this.formData.devList.push({
         name:"",
-        type:"",
+        type_spec:"",
         num: null,
         measure: '',
-        price: null,
-        useage: ''
+        planned_price: null,
+        purpose: ''
       })
     },
     //删除设备
@@ -125,33 +125,54 @@ export default {
     //提交项目修改
     onSubmit(){
       //转换需要提交的数据格式
-      var devs = []
-      var dev = {}
+      let added_devices=[], updated_devices=[];
+      let devList =  this.formData.devList;
       for(let key in this.formData.devList){
-        dev.name = this.formData.devList[key].name;
-        dev.type_spec = this.formData.devList[key].type;
-        dev.num = parseInt(this.formData.devList[key].num);
-        dev.measure = this.formData.devList[key].measure;
-        dev.purpose = this.formData.devList[key].useage;
-        dev.planned_price = parseFloat(this.formData.devList[key].price);
-        devs.push(dev)
+        if(devList[key].id){
+          //修改的设备列表
+          updated_devices.push(devList[key])
+        }else{
+          //添加的设备列表
+          added_devices.push(devList[key])
+        }
       }
-      this.$axios.post(this.$api.create_project_plan,{
+      console.log(updated_devices);
+      console.log(added_devices);
+      this.$axios
+        .put(this.$api.update_project_plan(this.project.id),{
         organ_id: this.staff.organ_id,
+        handing_type: this.formData.projectType, 
         project_title: this.formData.projectName,
         purpose: this.formData.resion,
-        creator_id: this.staff.id,
-        related_dept_id: this.staff.dept_id,
-        ordered_devices:devs
+        added_devices: added_devices,
+        updated_devices:updated_devices,
       })
         .then(res=>{
-          this.$checkResData(res);
           console.log(res);
-          this.$message({type:'success', message:'项目申请成功'})
-          this.$router.push({name: 'myProjectLink'})
+          this.$checkResData(res);
+          this.$message({type:'success', message:'项目修改成功'})
+          this.isEdit = false;
+          this.updateProject();
         })
         .catch(err=>{
           this.$message.error('操作失败')
+          console.log(err);
+        })
+    },
+    //更新项目数据 
+    updateProject(){
+      this.$axios
+        .get(`${this.$api.get_project_detail(this.project.id)}?organ_id=${this.staff.organ_id}`)
+        .then(res=>{
+          this.$checkResData(res);
+          this.project = res.data.project;
+          this.formData.projectName = this.project.title;
+          this.formData.projectType = this.project.handing_type;
+          this.formData.resion = this.project.purpose;
+          this.formData.devList = this.project.ordered_devices;          
+        })
+        .catch(err=>{
+          this.$message.error('数据更新失败！');
           console.log(err);
         })
     },

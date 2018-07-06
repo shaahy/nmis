@@ -17,7 +17,7 @@
     <el-row class="row3">
       <div v-for="project in projects" :key='project.id' class="item clearfix">
         <div class="left">
-          <div class="portrait">{{ project.title.slice(0,1) }}</div>
+          <div class="portrait" :class="{gray : !project.isHasFlow}">{{ project.title.slice(0,1) }}</div>
           <div class="info">
             <h2 class="project-name"> {{project.title}} </h2>
             <p class="applicant">负责人：<strong> {{ project.performer_name}} </strong></p>
@@ -27,7 +27,7 @@
         </div>
         <div class="right">
           <div class="flow">
-            <el-steps :active="getActiveMilestones(project)" finish-status="success" align-center space='150px'>
+            <el-steps :active="project.current_mile_index" finish-status="success" align-center space='150px'>
               <el-step 
                 v-for="milestone in project.attached_flow.milestones"
                 :key="milestone.id" 
@@ -35,7 +35,7 @@
                 :description="getStepDate(milestone.flow_id, milestone.id) | format-date">
               </el-step>
             </el-steps> 
-            <h3 v-if="!project.isHasFlow" style="margin-left:50px;color:red;">没有分配流程</h3>             
+            <h3 v-if="!project.isHasFlow" style="margin-left:50px;color:red;">待启动</h3>             
           </div>
         </div>
       </div>    
@@ -145,6 +145,12 @@ export default {
           this.projects = res.data.projects.slice(0);
           let status;
           for(let key in this.projects){
+            if(this.projects[key].status === 'DO'){
+              this.projects[key].current_mile_index = 999;
+            }else{
+              this.projects[key].current_mile_index = this.getActiveMilestones(this.projects[key]);
+            }
+            
             status = this.projects[key].status
             if(status === 'PE'){
               this.formData.count.todo += 1;
@@ -300,6 +306,10 @@ export default {
       float:left;
       margin-top: 32px;
     }
+    .gray{
+      background-color: #eee;
+      color:#999;
+    }  
     .info{
       width:calc(100% - 90px);
       display: block;
@@ -354,6 +364,7 @@ export default {
     }
   }
 }
+
 </style>
 <style lang="sass">
 

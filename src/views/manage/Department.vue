@@ -5,7 +5,7 @@
       <div class="header">
         <span class="title"><i></i> 数据列表</span>
         <el-button type="primary" @click="handleAdd">+ 添加部门</el-button>
-        <el-button type="primary">导入</el-button>
+        <el-button type="primary" @click="handleImport">批量导入</el-button>
       </div>
       <div class="list">
         <el-table :data="tableData" style="width: 100%">
@@ -80,7 +80,21 @@
         <el-button type="primary" @click="confirmEdit('editForm')">提 交</el-button>
         <el-button type="info" @click="cancelEdit('editForm')" >取 消</el-button>
       </div>
-    </el-dialog>    
+    </el-dialog> 
+
+    <!-- 批量导入 -->
+    <el-dialog title="批量导入" :visible.sync="importVisible" width="600px">
+      <div><a href="/static/import-dept.xlsx" target="_blank" download="部门批量导入模板.xlsx" class="file">点击下载模板文件</a></div>      
+      <input 
+        class = "file" 
+        name = "file" 
+        type = "file"
+        ref = "file"/>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="confirmImport('file')">导 入</el-button>
+        <el-button @click="cancelImport('file')" type="info">取 消</el-button>
+      </div>
+    </el-dialog>        
   </div>
 </template>
 
@@ -105,6 +119,7 @@ export default {
      */
      addVisible:false,
      editVisible:false,
+     importVisible:false, //批量导入显隐
      editData:{
        name:'',
        desc:'',
@@ -246,6 +261,42 @@ export default {
           });          
         });      
     },
+
+    /* 批量导入 */
+    handleImport(){
+      this.importVisible = true;
+    },
+    cancelImport(file){
+      this.importVisible = false;
+      this.$refs.file.value = '';
+    },
+    confirmImport(file){
+      //console.log(this.$refs.file.files[0]);
+        let param = new FormData(); //创建form对象
+        param.append('dept_excel_file',this.$refs.file.files[0]);//通过append向form对象添加数据
+        let config = { //配置请求头 
+          headers:{'Content-Type':'multipart/form-data'}
+        };
+        this.$axios
+          .post(
+            `${this.$api.batch_upload_departments(this.$store.getters["user/getStaff"].organ_id)}`,
+            param,
+            config    
+          )
+          .then(res=>{
+            console.log(res);
+            this.$checkResData(res);
+            this.$message({ type: "success", message: "操作成功" });
+            this.importVisible = false;
+            this.getDepartmentList();
+            this.$refs.file.value = '';
+          })   
+          .catch(err=>{
+            this.$message.error(err);
+            console.log(err);
+          })   
+    },
+
     //获取部门数据 
     getDepartmentList(){
       this.$axios.get(this.$api.get_department_list(this.$store.getters['user/getStaff'].organ_id))
@@ -298,5 +349,12 @@ export default {
     margin-top:2px;
   }
 }
-
+.file{
+  color: #309089;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  display: block;
+  text-decoration: underline;
+}
 </style>

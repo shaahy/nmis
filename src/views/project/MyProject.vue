@@ -28,7 +28,7 @@
         </div>
         <div class="right">
           <div class="flow">
-            <el-steps :active="getActiveMilestones(project)" finish-status="success" align-center space='150px'>
+            <el-steps :active="project.current_mile_index" finish-status="success" align-center space='150px'>
               <el-step 
                 v-for="milestone in project.attached_flow.milestones"
                 :key="milestone.id" 
@@ -36,7 +36,7 @@
                 :description="getStepDate(milestone.flow_id, milestone.id) | format-date">
               </el-step>
             </el-steps> 
-            <h3 v-if="!project.isHasFlow" style="margin-left:50px;color:red;">没有分配流程</h3>             
+            <h3 v-if="!project.isHasFlow" style="margin-left:50px;color:red;">待启动</h3>             
           </div>
         </div>
       </div>    
@@ -52,6 +52,7 @@ export default {
   data() {
     return {
       staff: {},
+      current_mile_index:-1,
       formData:{
         keyWord:'',
         screening:'',
@@ -176,6 +177,11 @@ export default {
           this.projects = res.data.projects.slice(0);
           let status;
           for(let key in this.projects){
+            if(this.projects[key].status === 'DO'){
+              this.projects[key].current_mile_index = 999;
+            }else{
+              this.projects[key].current_mile_index = this.getActiveMilestones(this.projects[key]);
+            }            
             status = this.projects[key].status
             if(status === 'PE'){
               this.formData.count.todo += 1;
@@ -186,7 +192,7 @@ export default {
             }
           }
           this.formData.count.all = this.projects.length;
-
+          //
           //重新封装数据，便于组件循环渲染
           this.projects.forEach(project=>{
             project.isHasFlow = project.attached_flow.id ? true : false;
@@ -240,6 +246,7 @@ export default {
     init(){
       this.staff = this.$store.getters["user/getStaff"];
       this.getProjectAndCount();
+      
     }        
   },
   created() {

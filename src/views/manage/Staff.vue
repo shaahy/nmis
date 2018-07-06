@@ -125,6 +125,7 @@
 
     <!-- 批量导入员工窗体 -->
     <el-dialog title="批量导入" :visible.sync="importVisible" width="600px">
+      <div><a href="/static/import-staff.xlsx" target="_blank" download="员工批量导入模板.xlsx" class="file">点击下载模板文件</a></div>
       <input 
         class = "file" 
         name = "file" 
@@ -458,7 +459,6 @@ export default {
             config    
           )
           .then(res=>{
-            console.log(res);
             this.$checkResData(res);
             this.$message({ type: "success", message: "操作成功" });
             this.importVisible = false;
@@ -546,5 +546,13 @@ export default {
     padding: 20px 40px 40px 40px;
     margin-top: 2px;
   }
+}
+.file{
+  color: #309089;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  display: block;
+  text-decoration: underline;
 }
 </style>
