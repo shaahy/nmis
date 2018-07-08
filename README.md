@@ -22,7 +22,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 
 
-##相关文件和文件夹的含义：
+## 相关文件和文件夹的含义：
 * build 文件夹: 里面是对 webpack 开发和打包的相关设置，包括入口文件、输出文件、使用的模块等；
 * config 文件夹: 环境变量（调试/生产），VUE配置文件。
 * node_modules: 项目的依赖库；
